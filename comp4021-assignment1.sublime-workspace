@@ -1,0 +1,224 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+		]
+	},
+	"buffers":
+	[
+	],
+	"build_system": "",
+	"command_palette":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"console":
+	{
+		"height": 125.0
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/Users/parkjiho/Documents/Crevate-IoT/startbootstrap-clean-blog-jekyll/_site/index.html",
+		"/Users/parkjiho/Documents/Crevate-IoT/eposition/_includes/scripts.html",
+		"/Users/parkjiho/Documents/eposition.sublime-project",
+		"/Users/parkjiho/Documents/Crevate-IoT/eposition/_config.yml",
+		"/Users/parkjiho/Documents/railsprojects/app/db/migrate/20150308122741_create_assignments.rb",
+		"/Users/parkjiho/Documents/railsprojects/app/db/migrate/20150308115201_add_email_and_rotting_to_zombies.rb",
+		"/Users/parkjiho/Documents/railsprojects/app/db/schema.rb",
+		"/Users/parkjiho/Documents/railsprojects/app/db/migrate/20150308115439_remove_age_from_zombies.rb",
+		"/Users/parkjiho/Documents/railsprojects/app/config/database.yml",
+		"/Users/parkjiho/Documents/Crevate-IoT/startbootstrap-clean-blog-jekyll/index.md",
+		"/Users/parkjiho/Documents/railsprojects/app/db/migrate/20150308113756_create_zombies.rb",
+		"/Users/parkjiho/Documents/Crevate-IoT/startbootstrap-clean-blog-jekyll/about.md",
+		"/Users/parkjiho/Documents/Crevate-IoT/startbootstrap-clean-blog-jekyll/index.html",
+		"/Users/parkjiho/Documents/Crevate-IoT/startbootstrap-clean-blog-jekyll/about.html",
+		"/Users/parkjiho/Library/Application Support/Sublime Text 2/Packages/Default/Preferences.sublime-settings",
+		"/Users/parkjiho/Documents/example.out",
+		"/Users/parkjiho/Documents/a.out",
+		"/Users/parkjiho/Documents/Yamm 서비스 이용약관",
+		"/Users/parkjiho/Documents/Yamm 개인정보 처리방침",
+		"/Users/parkjiho/Documents/Yamm 위치기반 서비스 이용약관",
+		"/Users/parkjiho/AndroidStudioProjects/kakao-android-sdk-project-1.0.42/sdk/res/layout/kakao_login_layout.xml",
+		"/Users/parkjiho/AndroidStudioProjects/kakao-android-sdk-project-1.0.39/sdk/src/com/kakao/Session.java",
+		"/Users/parkjiho/Downloads/kakao-android-sdk-gradle-samples-1.0.39/build.gradle",
+		"/Users/parkjiho/Documents/얌/api.raml"
+	],
+	"find":
+	{
+		"height": 35.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"font",
+			"꼬치구이",
+			"알",
+			"알탕",
+			"누룽지탕",
+			"홍합탕",
+			"알탕",
+			"닭똥알탕",
+			"닭똥집",
+			"오삼불고기",
+			"김치찌개",
+			"돈가",
+			"돈가스",
+			"초밥",
+			"등갈비",
+			"볶음우동",
+			"초밥",
+			"순대볶음",
+			"손대볶음",
+			"고추장삼겹순대볶",
+			"고추장삼겹순대볶음",
+			"돼지갈비",
+			"순대",
+			"순대국",
+			"꿍",
+			"양",
+			"똠",
+			"똠양",
+			"꿍",
+			"똠",
+			"양",
+			"얌",
+			"똥얌꿍",
+			"똠얌꿍",
+			"모듬전",
+			"파전",
+			"보쌈",
+			"수육",
+			"떡볶이",
+			"비빔밥",
+			"돌솥",
+			"회냉면",
+			"비빔냉면",
+			"쭈꾸미",
+			"물냉면",
+			"콩국수",
+			"피자",
+			"북어국",
+			"떡갈비",
+			"곰탕",
+			"스테이크",
+			"크림스파게티",
+			"샌드위치",
+			"치킨",
+			"꽃등심",
+			"④",
+			"③",
+			"②",
+			"①",
+			"이메",
+			"이메일",
+			"이메",
+			"이메일",
+			"R.layout."
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"  4.",
+			"  3.",
+			"  2.",
+			"  1."
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 0.0
+	},
+	"input":
+	{
+		"height": 0.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"replace":
+	{
+		"height": 64.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 500.0,
+		"selected_items":
+		[
+		],
+		"width": 380.0
+	},
+	"show_minimap": true,
+	"show_open_files": true,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 386.0,
+	"status_bar_visible": true
+}
