@@ -1,3 +1,37 @@
+var level1_platform = 
+[
+"0110000000000000000000000000000000000000",
+"0000000000000000000000000000000000000000",
+"0000000000000000000000000000000000000000",
+"0000000000000000000000000000000000000000",
+"0000000000000000000000000000000000000000",
+"0000000000000000000000000000000000000000",
+"0000000000000000000000000000000000000000",
+"0000000000000000000000000000000000000000",
+"0000000000000000000001000000000000000000",
+"0000000000000000000001000000000000000000",
+"0000000000000000000000000000000000000000",
+"0000000000000000000000000000000000000000",
+"0000000000000000000000000000000000000000",
+"0000000000000000000000000000000000000000",
+"0000000000000000000000000000000000000000",
+"0000000000000000000000000000000000000000",
+"0000000000000000000000000000000000000000",
+"0000000000000000000000000000000000000000",
+"0000000000000000000000000000000000000000",
+"0000000000000000000000000000000000000000",
+"0000000000000000000000000000000000000000",
+"0000000000000000000000000000000000000000",
+"0000000000000000000000000000000000000000",
+"0000000000000000000000000000000000000000",
+"0000011111111110000000000000000000000000",
+"0000000000000000000000000000000000000000",
+"0000000000000000000001111111111000000000",
+"0000000000000000000000000000000000000000",
+"0000000000000000000000000000000000000000",
+"1111111111111111111111111111111111111111"]
+
+
 // The point and size class used in this program
 function Point(x, y) {
     this.x = (x)? parseFloat(x) : 0.0;
@@ -26,6 +60,7 @@ function Player() {
 
 Player.prototype.isOnPlatform = function() {
     var platforms = svgdoc.getElementById("platforms");
+
     for (var i = 0; i < platforms.childNodes.length; i++) {
         var node = platforms.childNodes.item(i);
         if (node.nodeName != "rect") continue;
@@ -89,13 +124,13 @@ Player.prototype.collideScreen = function(position) {
 // Below are constants used in the game
 //
 var PLAYER_SIZE = new Size(40, 40);         // The size of the player
-var SCREEN_SIZE = new Size(600, 560);       // The size of the game screen
+var SCREEN_SIZE = new Size(800, 600);       // The size of the game screen
 var PLAYER_INIT_POS  = new Point(0, 0);     // The initial position of the player
 
 var MOVE_DISPLACEMENT = 5;                  // The speed of the player in motion
 var JUMP_SPEED = 15;                        // The speed of the player jumping
 var VERTICAL_DISPLACEMENT = 1;              // The displacement of vertical speed
-
+var PLATFORM_SIZE = 20
 var GAME_INTERVAL = 25;                     // The time interval of running the game
 
 
@@ -109,11 +144,11 @@ var player = null;                          // The player object
 var gameInterval = null;                    // The interval
 var zoom = 1.0;                             // The zoom level of the screen
 
-
 //
 // The load function for the SVG document
 //
 function load(evt) {
+
     // Set the root node to the global variable
     svgdoc = evt.target.ownerDocument;
 
@@ -127,10 +162,12 @@ function load(evt) {
     // Create the player
     player = new Player();
 
+    //
+    setUpPlatform(1);
+
     // Start the game interval
     gameInterval = setInterval("gamePlay()", GAME_INTERVAL);
 }
-
 
 //
 // This function removes all/certain nodes under a group
@@ -250,3 +287,28 @@ function updateScreen() {
     // Add your code here
     
 }
+
+function getValueFromPlatform(x, y){
+    return level1_platform[SCREEN_SIZE.h/PLATFORM_SIZE-y-1].charAt(x)  
+}
+
+function setUpPlatform(level){
+    var platforms = svgdoc.getElementById("platforms");
+    var x,y
+
+    if (level == 1){
+        for (y=0;y<SCREEN_SIZE.h/PLATFORM_SIZE;y++){
+            for(x=0;x<SCREEN_SIZE.w/PLATFORM_SIZE;x++){
+                if (getValueFromPlatform(x,y)=='1'){
+                    var newPlatform=svgdoc.createElementNS("http://www.w3.org/2000/svg","rect");
+                    newPlatform.setAttribute("width",PLATFORM_SIZE)
+                    newPlatform.setAttribute("height",PLATFORM_SIZE)
+                    newPlatform.setAttribute("x",PLATFORM_SIZE*x)
+                    newPlatform.setAttribute("y",PLATFORM_SIZE*(SCREEN_SIZE.h/PLATFORM_SIZE-y-1))   
+                    platforms.appendChild(newPlatform)
+                }
+            }
+        }    
+    }
+}
+

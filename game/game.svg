@@ -8,7 +8,7 @@
 
   <defs>
     <clipPath id="gameareaclip">
-      <rect x="20" y="20" width="600" height="560"/>
+      <rect x="20" y="20" width="800" height="600"/>
     </clipPath>
     <pattern id="background_pattern" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
       <rect width="20" height="20" style="fill:orange"/>
@@ -19,18 +19,22 @@
       <stop offset="0.8" style="stop-color:yellow;stop-opacity:1"/>
       <stop offset="1.0" style="stop-color:orange;stop-opacity:1"/>
     </radialGradient>
+
+    <clipPath id="platformclip">
+      <rect x="20" y="20" width="20" height="20"/>
+    </clipPath>
   </defs>
 
   <rect width="100%" height="100%" style="fill:url(#background_pattern);stroke:orange;stroke-width:4" />
 
-  <rect x="20" y="20" width="600" height="560" style="fill:black;stroke:red;stroke-width:5" />
+  <rect x="20" y="20" width="800" height="600" style="fill:black;stroke:red;stroke-width:5" />
 
   <!-- Add your button here -->
 
   <g style="clip-path:url(#gameareaclip)">
     <g transform="translate(20,20)">
-      <g id="gamearea" transform="translate(0,0)" width="600" height="560">
-        <rect x="0" y="0" width="600" height="560" style="fill:white" />
+      <g id="gamearea" transform="translate(0,0)" width="800" height="600">
+        <rect x="0" y="0" width="800" height="600" style="fill:white" />
 
         <g id="platforms">
 
