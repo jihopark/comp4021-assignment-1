@@ -1,6 +1,6 @@
 var level1_platform = 
 [
-"0110000000000000000000000000000000000000",
+"0000000000000000000000000000000000000000",
 "0000000000000000000000000000000000000000",
 "0000000000000000000000000000000000000000",
 "0000000000000000000000000000000000000000",
@@ -27,8 +27,8 @@ var level1_platform =
 "0000011111111110000000000000000000000000",
 "0000000000000000000000000000000000000000",
 "0000000000000000000001111111111000000000",
-"0000000000000000000000000000000000000000",
-"0000000000000000000000000000000000000000",
+"0000000000000000000000000000001000000000",
+"0000000000000000000000000000001000000000",
 "1111111111111111111111111111111111111111"]
 
 
@@ -63,7 +63,7 @@ Player.prototype.isOnPlatform = function() {
 
     for (var i = 0; i < platforms.childNodes.length; i++) {
         var node = platforms.childNodes.item(i);
-        if (node.nodeName != "rect") continue;
+        if (node.nodeName != "use") continue;
 
         var x = parseFloat(node.getAttribute("x"));
         var y = parseFloat(node.getAttribute("y"));
@@ -84,7 +84,7 @@ Player.prototype.collidePlatform = function(position) {
     var platforms = svgdoc.getElementById("platforms");
     for (var i = 0; i < platforms.childNodes.length; i++) {
         var node = platforms.childNodes.item(i);
-        if (node.nodeName != "rect") continue;
+        if (node.nodeName != "use") continue;
 
         var x = parseFloat(node.getAttribute("x"));
         var y = parseFloat(node.getAttribute("y"));
@@ -123,6 +123,9 @@ Player.prototype.collideScreen = function(position) {
 //
 // Below are constants used in the game
 //
+var xmlns = "http://www.w3.org/2000/svg",
+    xlinkns = "http://www.w3.org/1999/xlink";
+
 var PLAYER_SIZE = new Size(40, 40);         // The size of the player
 var SCREEN_SIZE = new Size(800, 600);       // The size of the game screen
 var PLAYER_INIT_POS  = new Point(0, 0);     // The initial position of the player
@@ -300,9 +303,9 @@ function setUpPlatform(level){
         for (y=0;y<SCREEN_SIZE.h/PLATFORM_SIZE;y++){
             for(x=0;x<SCREEN_SIZE.w/PLATFORM_SIZE;x++){
                 if (getValueFromPlatform(x,y)=='1'){
-                    var newPlatform=svgdoc.createElementNS("http://www.w3.org/2000/svg","rect");
-                    newPlatform.setAttribute("width",PLATFORM_SIZE)
-                    newPlatform.setAttribute("height",PLATFORM_SIZE)
+                    var newPlatform=svgdoc.createElementNS(xmlns,"use");
+                    newPlatform.setAttributeNS(null, "class", "platform");
+                    newPlatform.setAttributeNS(xlinkns, "xlink:href", "#platform_square");
                     newPlatform.setAttribute("x",PLATFORM_SIZE*x)
                     newPlatform.setAttribute("y",PLATFORM_SIZE*(SCREEN_SIZE.h/PLATFORM_SIZE-y-1))   
                     platforms.appendChild(newPlatform)

@@ -23,6 +23,8 @@
     <clipPath id="platformclip">
       <rect x="20" y="20" width="20" height="20"/>
     </clipPath>
+
+    <rect id="platform_square" x="0" y="0" width="20" height="20" style="fill:orange" />
   </defs>
 
   <rect width="100%" height="100%" style="fill:url(#background_pattern);stroke:orange;stroke-width:4" />
