@@ -29,7 +29,7 @@ var level1_platform =
 "0000000000000000000001111111111000000000",
 "0000000000000000000000000000001000000000",
 "0000000000000000000000000000001000000000",
-"1111111111111111111111111111111111111111"]
+"1111111111111111111111111111111111110000"]
 
 
 // The point and size class used in this program
@@ -60,7 +60,7 @@ function Player() {
 
 Player.prototype.isOnPlatform = function() {
     var platforms = svgdoc.getElementById("platforms");
-
+    var count = 0
     for (var i = 0; i < platforms.childNodes.length; i++) {
         var node = platforms.childNodes.item(i);
         if (node.nodeName != "use") continue;
@@ -70,10 +70,12 @@ Player.prototype.isOnPlatform = function() {
         var w = parseFloat(node.getAttribute("width"));
         var h = parseFloat(node.getAttribute("height"));
 
-        if (((this.position.x + PLAYER_SIZE.w > x && this.position.x < x + w) ||
+        if (((this.position.x >= x-PLAYER_SIZE.w && this.position.x <= x + PLATFORM_SIZE) ||
              ((this.position.x + PLAYER_SIZE.w) == x && this.motion == motionType.RIGHT) ||
-             (this.position.x == (x + w) && this.motion == motionType.LEFT)) &&
-            this.position.y + PLAYER_SIZE.h == y) return true;
+             (this.position.x == (x + PLATFORM_SIZE) && this.motion == motionType.LEFT)) &&
+            this.position.y + PLAYER_SIZE.h == y){
+            return true;
+        }
     }
     if (this.position.y + PLAYER_SIZE.h == SCREEN_SIZE.h) return true;
 
@@ -202,10 +204,10 @@ function keydown(evt) {
         case "M".charCodeAt(0):
             player.motion = motionType.RIGHT;
             break;
-			
-
-        // Add your code here
-        
+        case "Z".charCodeAt(0):
+            if (player.isOnPlatform()){
+                player.verticalSpeed = JUMP_SPEED
+            }
 
     }
 }
