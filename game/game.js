@@ -67,8 +67,8 @@ Player.prototype.isOnPlatform = function() {
 
         var x = parseFloat(node.getAttribute("x"));
         var y = parseFloat(node.getAttribute("y"));
-        var w = parseFloat(node.getAttribute("width"));
-        var h = parseFloat(node.getAttribute("height"));
+        var w = PLATFORM_SIZE;
+        var h = PLATFORM_SIZE;
 
         if (((this.position.x >= x-PLAYER_SIZE.w && this.position.x <= x + PLATFORM_SIZE) ||
              ((this.position.x + PLAYER_SIZE.w) == x && this.motion == motionType.RIGHT) ||
@@ -90,8 +90,8 @@ Player.prototype.collidePlatform = function(position) {
 
         var x = parseFloat(node.getAttribute("x"));
         var y = parseFloat(node.getAttribute("y"));
-        var w = parseFloat(node.getAttribute("width"));
-        var h = parseFloat(node.getAttribute("height"));
+        var w = PLATFORM_SIZE;
+        var h = PLATFORM_SIZE;
         var pos = new Point(x, y);
         var size = new Size(w, h);
 
@@ -99,7 +99,7 @@ Player.prototype.collidePlatform = function(position) {
             position.x = this.position.x;
             if (intersect(position, PLAYER_SIZE, pos, size)) {
                 if (this.position.y >= y + h)
-                    position.y = y + h;
+                    position.y = y + PLATFORM_SIZE;
                 else
                     position.y = y - PLAYER_SIZE.h;
                 this.verticalSpeed = 0;
