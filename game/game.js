@@ -3,25 +3,25 @@ var level1_platform =
 "0000000000000000000000000000000000000000",
 "0000000000000000000000000000000000000000",
 "0000000000000000000000000000000000000000",
+"0000000000000000000000011111111111100000",
+"0000000001000000000000000000000000000000",
+"0000000000000000000000000000000000000002",
 "0000000000000000000000000000000000000000",
-"0000000000000000000000000000000000000000",
-"0000000000000000000000000000000000000000",
-"0000000000000000000000000000000000000000",
-"0000000000000000000000000000000000000000",
+"0000000000000010000000000000000010000000",
 "0000000000000000000001000000000000000000",
 "0000000000000000000001000000000000000000",
+"0000000000000000000000000000000010000000",
+"0000000100000000000000000000000000000000",
+"0000000000000000000000000000000000000000",
+"0000000000000000001111111100000000000000",
 "0000000000000000000000000000000000000000",
 "0000000000000000000000000000000000000000",
 "0000000000000000000000000000000000000000",
+"0000111111111111000000000111111111111100",
 "0000000000000000000000000000000000000000",
 "0000000000000000000000000000000000000000",
 "0000000000000000000000000000000000000000",
-"0000000000000000000000000000000000000000",
-"0000000000000000000000000000000000000000",
-"0000000000000000000000000000000000000000",
-"0000000000000000000000000000000000000000",
-"0000000000000000000000000000000000000000",
-"0000000000000000000000000000000000000000",
+"0000000000000000000111111111000000000000",
 "0000000000000000000000000000000000000000",
 "0000000000000000000000000000000000000000",
 "0000011111111110000000000000000000000000",
@@ -65,6 +65,8 @@ Player.prototype.isOnPlatform = function() {
         var node = platforms.childNodes.item(i);
         if (node.nodeName != "use") continue;
 
+        var className = node.getAttribute("class")
+        if (className!="platform") continue;
         var x = parseFloat(node.getAttribute("x"));
         var y = parseFloat(node.getAttribute("y"));
         var w = PLATFORM_SIZE;
@@ -87,6 +89,9 @@ Player.prototype.collidePlatform = function(position) {
     for (var i = 0; i < platforms.childNodes.length; i++) {
         var node = platforms.childNodes.item(i);
         if (node.nodeName != "use") continue;
+
+        var className = node.getAttribute("class")
+        if (className!="platform") continue;
 
         var x = parseFloat(node.getAttribute("x"));
         var y = parseFloat(node.getAttribute("y"));
@@ -121,6 +126,10 @@ Player.prototype.collideScreen = function(position) {
     }
 }
 
+Player.prototype.findExit = function(position){
+    return intersect(position,PLAYER_SIZE, exit_position, EXIT_SIZE)
+}
+
 
 //
 // Below are constants used in the game
@@ -129,8 +138,10 @@ var xmlns = "http://www.w3.org/2000/svg",
     xlinkns = "http://www.w3.org/1999/xlink";
 
 var PLAYER_SIZE = new Size(40, 40);         // The size of the player
+var EXIT_SIZE = new Size(40,40)
 var SCREEN_SIZE = new Size(800, 600);       // The size of the game screen
 var PLAYER_INIT_POS  = new Point(0, 0);     // The initial position of the player
+
 
 var MOVE_DISPLACEMENT = 5;                  // The speed of the player in motion
 var JUMP_SPEED = 15;                        // The speed of the player jumping
@@ -143,13 +154,14 @@ var LEVEL_TOTAL_TIME = 100*1000                  // The total time in seconds
 // Variables in the game
 //
 var motionType = {NONE:0, LEFT:1, RIGHT:2}; // Motion enum
-
+var exit_position
 var svgdoc = null;                          // SVG root document node
 var player = null;                          // The player object
 var gameInterval = null;                    // The interval
 var zoom = 1.0;                             // The zoom level of the screen
 var gameClock = null;
-
+var currentLevel = 1
+var remaining_time = LEVEL_TOTAL_TIME
 //
 // The load function for the SVG document
 //
@@ -234,15 +246,15 @@ function keyup(evt) {
 }
 
 function gameClockPlay(){
-    if (LEVEL_TOTAL_TIME == 0){ 
+    if (remaining_time == 0){ 
         gameOver()
         return ;
     }
     
-    LEVEL_TOTAL_TIME -= 1000;
+    remaining_time -= 1000;
 
     var clock = svgdoc.getElementById("clock_text")
-    clock.textContent = LEVEL_TOTAL_TIME/1000 
+    clock.textContent = remaining_time/1000 
                     
 }
 
@@ -294,6 +306,17 @@ function gamePlay() {
     player.position = position;
 
     updateScreen();
+
+    if (player.findExit(player.position)){
+        proceedToNextRound()
+    }
+}
+
+function proceedToNextRound(){
+    var clock = svgdoc.getElementById("level_text")
+    clock.textContent = "Level " + ++currentLevel 
+    player.position = PLAYER_INIT_POS
+    remaining_time = LEVEL_TOTAL_TIME
 }
 
 
@@ -330,6 +353,15 @@ function setUpPlatform(level){
                     newPlatform.setAttribute("x",PLATFORM_SIZE*x)
                     newPlatform.setAttribute("y",PLATFORM_SIZE*(SCREEN_SIZE.h/PLATFORM_SIZE-y-1))   
                     platforms.appendChild(newPlatform)
+                }
+                else if (getValueFromPlatform(x,y)=='2'){
+                    var newPlatform=svgdoc.createElementNS(xmlns,"use");
+                    newPlatform.setAttributeNS(null, "class", "level_exit");
+                    newPlatform.setAttributeNS(xlinkns, "xlink:href", "#level_exit");
+                    newPlatform.setAttribute("x",PLATFORM_SIZE*x)
+                    newPlatform.setAttribute("y",PLATFORM_SIZE*(SCREEN_SIZE.h/PLATFORM_SIZE-y-1))   
+                    platforms.appendChild(newPlatform)
+                    exit_position = new Point(PLATFORM_SIZE*x-PLATFORM_SIZE, PLATFORM_SIZE*(SCREEN_SIZE.h/PLATFORM_SIZE-y-1))
                 }
             }
         }    
