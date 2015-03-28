@@ -137,7 +137,7 @@ var JUMP_SPEED = 15;                        // The speed of the player jumping
 var VERTICAL_DISPLACEMENT = 1;              // The displacement of vertical speed
 var PLATFORM_SIZE = 20
 var GAME_INTERVAL = 25;                     // The time interval of running the game
-
+var LEVEL_TOTAL_TIME = 100*1000                  // The total time in seconds
 
 //
 // Variables in the game
@@ -148,6 +148,7 @@ var svgdoc = null;                          // SVG root document node
 var player = null;                          // The player object
 var gameInterval = null;                    // The interval
 var zoom = 1.0;                             // The zoom level of the screen
+var gameClock = null;
 
 //
 // The load function for the SVG document
@@ -172,6 +173,7 @@ function load(evt) {
 
     // Start the game interval
     gameInterval = setInterval("gamePlay()", GAME_INTERVAL);
+    gameClock = setInterval("gameClockPlay();", 1000)
 }
 
 //
@@ -231,6 +233,23 @@ function keyup(evt) {
     }
 }
 
+function gameClockPlay(){
+    if (LEVEL_TOTAL_TIME == 0){ 
+        gameOver()
+        return ;
+    }
+    
+    LEVEL_TOTAL_TIME -= 1000;
+
+    var clock = svgdoc.getElementById("clock_text")
+    clock.textContent = LEVEL_TOTAL_TIME/1000 
+                    
+}
+
+function gameOver(){
+    var gameOverText = svgdoc.getElementById("game_over_text")
+    gameOverText.setAttribute("style","visibility:visible;fill:black;font-size:100px;z-index:100;")
+}
 
 //
 // This function updates the position and motion of the player in the system
