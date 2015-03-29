@@ -3,17 +3,17 @@ var level1_platform =
 "0000000000000000000000000030000000000000",
 "0000000000000040000000000000000000000000",
 "0000000003000000000000000000000000000000",
-"0000000000000000000000011111111111100000",
-"0000000001000000000000000000000000000000",
+"0000000000000000000000055111111111100000",
+"0000000005000000000000000000000000000000",
 "0000000000000000000003000000000030000002",
 "0000000000000000000000000000000000000000",
-"0000000000000010000000000000000010000000",
+"0000000000000100000000000000000010000000",
 "0000000000000000000001000000000000030000",
 "0000000300000000000001000000000000000000",
 "0000000000000000000000000000010000000000",
-"0000000100000000000000300000000000400000",
+"0000000500000000000000300000000000400000",
 "0000000000000000000000000000000000000000",
-"0000000000000000001111111100000000000000",
+"0000000000000000005511111100000000000000",
 "0000003004000000000000000000000000000000",
 "0000000000000000000000000000000030000000",
 "0000111111111100000000000000000000000000",
@@ -82,7 +82,7 @@ Player.prototype.isOnPlatform = function() {
         if (node.nodeName != "use") continue;
 
         var className = node.getAttribute("class")
-        if (className!="platform") continue;
+        if (className!="platform" && className!="disappear_platform") continue;
         var x = parseFloat(node.getAttribute("x"));
         var y = parseFloat(node.getAttribute("y"));
         var w = PLATFORM_SIZE;
@@ -92,12 +92,18 @@ Player.prototype.isOnPlatform = function() {
              ((this.position.x + PLAYER_SIZE.w) == x && this.motion == motionType.RIGHT) ||
              (this.position.x == (x + PLATFORM_SIZE) && this.motion == motionType.LEFT)) &&
             this.position.y + PLAYER_SIZE.h == y){
+            if (className == "disappear_platform")
+                setTimeout(removePlatform(node), DISAPPEARING_PLATFORM_TIMEOUT)
             return true;
         }
     }
     if (this.position.y + PLAYER_SIZE.h == SCREEN_SIZE.h) return true;
 
     return false;
+}
+
+function removePlatform(node){
+    node.parentNode.removeChild(node)
 }
 
 Player.prototype.collidePlatform = function(position) {
@@ -107,7 +113,7 @@ Player.prototype.collidePlatform = function(position) {
         if (node.nodeName != "use") continue;
 
         var className = node.getAttribute("class")
-        if (className!="platform") continue;
+        if (className!="platform" && className!="disappear_platform") continue;
 
         var x = parseFloat(node.getAttribute("x"));
         var y = parseFloat(node.getAttribute("y"));
@@ -188,6 +194,7 @@ var LEVEL_TOTAL_TIME = 100*1000                  // The total time in seconds
 var GHOST_MOVEMENT =50
 var GHOST_SIZE = new Size(PLATFORM_SIZE, PLATFORM_SIZE*2)
 var BULLET_SIZE = new Size(10,10)
+var DISAPPEARING_PLATFORM_TIMEOUT = 500
 
 var GET_COIN_SCORE = 10
 var GHOST_KILL_SCORE = 50
@@ -278,8 +285,9 @@ function keydown(evt) {
             break;
         case SPACE:
             if (bullet_count > 0) shoot()
+            evt.preventDefault()
             break;
-
+        return false
     }
 }
 
@@ -503,7 +511,7 @@ function collidePlatform(position, size){
         if (node.nodeName != "use") continue;
 
         var className = node.getAttribute("class")
-        if (className!="platform") continue;
+        if (className!="platform" && className!="disappear_platform") continue;
         var x = parseFloat(node.getAttribute("x"));
         var y = parseFloat(node.getAttribute("y"));
         if (intersect(position, size, new Point(x, y), new Size(PLATFORM_SIZE, PLATFORM_SIZE)))
@@ -552,15 +560,19 @@ function setUpPlatform(level){
     var EXIT = '2'
     var COIN = '3'
     var GHOST ='4'
+    var DISAPPEARING_PLATFORM = '5'
     var platforms = svgdoc.getElementById("platforms");
     var x,y
 
     if (level == 1){
         for (y=0;y<SCREEN_SIZE.h/PLATFORM_SIZE;y++){
             for(x=0;x<SCREEN_SIZE.w/PLATFORM_SIZE;x++){
-                if (getValueFromPlatform(x,y)==PLATFORM){
+                if (getValueFromPlatform(x,y)==PLATFORM || getValueFromPlatform(x,y)==DISAPPEARING_PLATFORM){
                     var newPlatform=svgdoc.createElementNS(xmlns,"use");
-                    newPlatform.setAttributeNS(null, "class", "platform");
+                    if (getValueFromPlatform(x,y)==DISAPPEARING_PLATFORM)
+                        newPlatform.setAttributeNS(null, "class", "disappear_platform");
+                    else
+                        newPlatform.setAttributeNS(null, "class", "platform");
                     newPlatform.setAttributeNS(xlinkns, "xlink:href", "#platform_square");
                     newPlatform.setAttribute("x",PLATFORM_SIZE*x)
                     newPlatform.setAttribute("y",PLATFORM_SIZE*(SCREEN_SIZE.h/PLATFORM_SIZE-y-1))   
