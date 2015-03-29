@@ -33,6 +33,13 @@ var level1_platform =
 
 
 // The point and size class used in this program
+
+function Bullet(obj, motion, point){
+    this.svgObject = obj
+    this.position = point
+    this.motion = motion    
+}
+
 function Ghost(obj, motionType, x, y, size){
     this.svgObject = obj
     this.position = new Point((x)? parseFloat(x) : 0.0, (y)? parseFloat(y) : 0.0)
@@ -64,6 +71,7 @@ function Player() {
     this.position = PLAYER_INIT_POS;
     this.motion = motionType.NONE;
     this.verticalSpeed = 0;
+    this.orientation = motionType.RIGHT
 }
 
 Player.prototype.isOnPlatform = function() {
@@ -179,6 +187,11 @@ var GAME_INTERVAL = 25;                     // The time interval of running the 
 var LEVEL_TOTAL_TIME = 100*1000                  // The total time in seconds
 var GHOST_MOVEMENT =50
 var GHOST_SIZE = new Size(PLATFORM_SIZE, PLATFORM_SIZE*2)
+var BULLET_SIZE = new Size(10,10)
+
+var GET_COIN_SCORE = 10
+var GHOST_KILL_SCORE = 50
+var LEVEL_PASS_SCORE = 1000
 //
 // Variables in the game
 //
@@ -197,6 +210,9 @@ var current_score = 0
 var isGameOver = false
 var ghost = []
 var ghost_count = 0
+var bullet = []
+var bullet_count = 8
+
 //
 // The load function for the SVG document
 //
@@ -245,6 +261,7 @@ function cleanUpGroup(id, textOnly) {
 function keydown(evt) {
     if (isGameOver) return false
     var keyCode = (evt.keyCode)? evt.keyCode : evt.getKeyCode();
+    var SPACE = 32;
 
     switch (keyCode) {
         case "N".charCodeAt(0):
@@ -258,6 +275,10 @@ function keydown(evt) {
             if (player.isOnPlatform()){
                 player.verticalSpeed = JUMP_SPEED
             }
+            break;
+        case SPACE:
+            if (bullet_count > 0) shoot()
+            break;
 
     }
 }
@@ -272,10 +293,12 @@ function keyup(evt) {
 
     switch (keyCode) {
         case "N".charCodeAt(0):
+            player.orientation = motionType.LEFT
             if (player.motion == motionType.LEFT) player.motion = motionType.NONE;
             break;
 
         case "M".charCodeAt(0):
+            player.orientation = motionType.RIGHT
             if (player.motion == motionType.RIGHT) player.motion = motionType.NONE;
             break;
     }
@@ -299,6 +322,33 @@ function gameOver(){
     var gameOverText = svgdoc.getElementById("game_over_text")
     gameOverText.setAttribute("style","visibility:visible;fill:black;font-size:100px;z-index:100;")
 }
+
+function shoot(){
+    var _x = player.position.x 
+    var _y = player.position.y
+
+    if (player.orientation == motionType.RIGHT)
+        _x += PLAYER_SIZE.w
+    _y += (PLAYER_SIZE.h/2)
+    
+    bullet[8-bullet_count] = new Bullet(createBulletSVG(), player.orientation, new Point(_x,_y))
+    updateBulletCount()
+}
+
+function createBulletSVG(){
+    var platforms = svgdoc.getElementById("platforms");
+
+    var bullet=svgdoc.createElementNS(xmlns,"use");
+    bullet.setAttributeNS(null, "class", "bullet");
+    bullet.setAttributeNS(xlinkns, "xlink:href", "#bullet");
+    platforms.appendChild(bullet)
+    return bullet
+} 
+
+function updateBulletCount(){
+    var text = svgdoc.getElementById("bullet_left")
+    text.textContent = --bullet_count + "/8" 
+}  
 
 //
 // This function updates the position and motion of the player in the system
@@ -342,12 +392,10 @@ function gamePlay() {
     // Set the location back to the player object (before update the screen)
     player.position = position;
 
-    updateGhostPosition()
-    
     updateScreen();
 
     processCoin(player.findCoin(player.position))
-    if(bumpIntoGhost(player.position)){
+    if(bumpIntoGhost(player.position)!=-1){
         gameOver()
     }
 
@@ -357,8 +405,10 @@ function gamePlay() {
 }
 
 function updateGhostPosition(){
+    var move = MOVE_DISPLACEMENT/2
+
     for (var i=0; i<ghost_count; i++){
-        var move = MOVE_DISPLACEMENT/2
+        if (!ghost[i]) continue
         if (ghost[i].motion== motionType.LEFT){
             move *= -1
             if (ghost[i].position.x + move >= ghost[i].original.x - GHOST_MOVEMENT)
@@ -379,12 +429,37 @@ function updateGhostPosition(){
     }
 }
 
+function updateBulletPosition(){
+    for (var i=0; i<8-bullet_count; i++){
+        var move = MOVE_DISPLACEMENT*3
+        if (!bullet[i]) continue
+        if (bullet[i].motion== motionType.LEFT) bullet[i].position.x -= move
+        else bullet[i].position.x += move
+        
+        var ghost_n = bumpIntoGhost(bullet[i].position)
+        if (ghost_n!=-1){
+            killGhost(ghost_n)
+            removeBullet(i)
+        }
+        else if (collidePlatform(bullet[i].position, BULLET_SIZE))
+            removeBullet(i)
+        else if (bullet[i].position.x < 0 || bullet[i].position.x > SCREEN_SIZE.w 
+            || bullet[i].position.y < 0 || bullet[i].position.y > SCREEN_SIZE.h)
+            removeBullet(i)
+    }    
+}
+
+function removeBullet(n){
+    bullet[n].svgObject.parentNode.removeChild(bullet[n].svgObject)
+    bullet[n] = null  
+}
+
 function proceedToNextRound(){
     if (remaining_coin!=0)
         return ;
     var clock = svgdoc.getElementById("level_text")
     player.position = PLAYER_INIT_POS
-    updateScore(remaining_time/100 + currentLevel*1000)
+    updateScore(remaining_time/100 + currentLevel*LEVEL_PASS_SCORE)
     clock.textContent = "Level " + ++currentLevel 
     
     remaining_time = LEVEL_TOTAL_TIME
@@ -398,21 +473,43 @@ function processCoin(coin){
     remaining_coin--;
     console.log("Remaining coin " + remaining_coin)
 
-    updateScore(10)
+    updateScore(GET_COIN_SCORE)
+}
+
+function killGhost(n){
+    ghost[n].svgObject.parentNode.removeChild(ghost[n].svgObject)
+    ghost[n] = null
+    updateScore(GHOST_KILL_SCORE)
 }
 
 function bumpIntoGhost(position){
     for (var i=0; i<ghost_count; i++){
-        if (intersect(position, PLAYER_SIZE, ghost[i].position, GHOST_SIZE))
-            return true
+        if (ghost[i] && intersect(position, PLAYER_SIZE, ghost[i].position, GHOST_SIZE))
+            return i
     }
-    return false
+    return -1
 }
 
 function updateScore(addition){
     var score = svgdoc.getElementById("score")
     current_score += addition
     score.textContent = current_score
+}
+
+function collidePlatform(position, size){        
+    var platforms = svgdoc.getElementById("platforms");
+    for (var i = 0; i < platforms.childNodes.length; i++) {
+        var node = platforms.childNodes.item(i);
+        if (node.nodeName != "use") continue;
+
+        var className = node.getAttribute("class")
+        if (className!="platform") continue;
+        var x = parseFloat(node.getAttribute("x"));
+        var y = parseFloat(node.getAttribute("y"));
+        if (intersect(position, size, new Point(x, y), new Size(PLATFORM_SIZE, PLATFORM_SIZE)))
+            return true
+    }
+    return false
 }
 
 
@@ -423,14 +520,23 @@ function updateScore(addition){
 //
 function updateScreen() {
     if (isGameOver) return ;
+
+    updateGhostPosition()
+    updateBulletPosition()
+
     // Transform the player
     player.node.setAttribute("transform", "translate(" + player.position.x + "," + player.position.y + ")");
     
     // ghost
     for (var i=0; i<ghost_count; i++){
-        ghost[i].svgObject.setAttribute("transform", "translate(" + ghost[i].position.x + "," + ghost[i].position.y + ")");    
+        if (ghost[i]) ghost[i].svgObject.setAttribute("transform", "translate(" + ghost[i].position.x + "," + ghost[i].position.y + ")");    
     }
 
+    //bullet
+    for (var i=0; i<8-bullet_count; i++){
+        if (bullet[i])
+            bullet[i].svgObject.setAttribute("transform", "translate(" + bullet[i].position.x + "," + bullet[i].position.y + ")");    
+    }
     // Calculate the scaling and translation factors	
     
     // Add your code here
@@ -485,7 +591,6 @@ function setUpPlatform(level){
                     newPlatform.setAttributeNS(null, "class", "ghost");
                     newPlatform.setAttributeNS(xlinkns, "xlink:href", "#ghost");
                     platforms.appendChild(newPlatform)
-                    console.log(""+((ghost_count%2)+1));
                     ghost[ghost_count++] = new Ghost(newPlatform, (ghost_count%2)+1,_x,_y, new Size(PLATFORM_SIZE, PLAYER_SIZE*2))
                 }
             }
