@@ -17,7 +17,7 @@ var level1_platform =
 "0000003004000000000000000000000000000000",
 "0000000000000000000000000000000030000000",
 "0000111111111100000000000000000000000000",
-"0000000000000000000000000111111111111100",
+"0000000000000000000000000111111111116600",
 "0000000000000000000000000000000000000000",
 "0000000000000000000000300000000000000000",
 "0000000000000000000000000000000000000000",
@@ -33,6 +33,13 @@ var level1_platform =
 
 
 // The point and size class used in this program
+
+function VerticalPlatform(obj, motion, origin){
+    this.svgObject = obj
+    this.motion = motion
+    this.origin = origin
+    this.position = new Point(origin.x, origin.y)
+}
 
 function Bullet(obj, motion, point){
     this.svgObject = obj
@@ -72,6 +79,11 @@ function Player() {
     this.motion = motionType.NONE;
     this.verticalSpeed = 0;
     this.orientation = motionType.RIGHT
+    this.isOnVerticalPlatform = false
+}
+
+function isPlatform(className){
+    return className=="vertical_platform" || className=="platform" || className=="disappear_platform"
 }
 
 Player.prototype.isOnPlatform = function() {
@@ -82,20 +94,27 @@ Player.prototype.isOnPlatform = function() {
         if (node.nodeName != "use") continue;
 
         var className = node.getAttribute("class")
-        if (className!="platform" && className!="disappear_platform") continue;
+        if (!isPlatform(className)) continue;
         var x = parseFloat(node.getAttribute("x"));
         var y = parseFloat(node.getAttribute("y"));
         var w = PLATFORM_SIZE;
         var h = PLATFORM_SIZE;
 
+        var isVerticalPlatform = className =="vertical_platform" 
         if (((this.position.x >= x-PLAYER_SIZE.w && this.position.x <= x + PLATFORM_SIZE) ||
              ((this.position.x + PLAYER_SIZE.w) == x && this.motion == motionType.RIGHT) ||
              (this.position.x == (x + PLATFORM_SIZE) && this.motion == motionType.LEFT)) &&
             this.position.y + PLAYER_SIZE.h == y){
+            player.isOnVerticalPlatform = false
             if (className == "disappear_platform")
                 setTimeout(removePlatform(node), DISAPPEARING_PLATFORM_TIMEOUT)
+            else if (isVerticalPlatform){
+                player.isOnVerticalPlatform = true
+            }
             return true;
         }
+        if (VerticalPlatform)
+            player.isOnVerticalPlatform = false
     }
     if (this.position.y + PLAYER_SIZE.h == SCREEN_SIZE.h) return true;
 
@@ -113,7 +132,7 @@ Player.prototype.collidePlatform = function(position) {
         if (node.nodeName != "use") continue;
 
         var className = node.getAttribute("class")
-        if (className!="platform" && className!="disappear_platform") continue;
+        if (!isPlatform(className)) continue;
 
         var x = parseFloat(node.getAttribute("x"));
         var y = parseFloat(node.getAttribute("y"));
@@ -123,8 +142,14 @@ Player.prototype.collidePlatform = function(position) {
         var size = new Size(w, h);
 
         if (intersect(position, PLAYER_SIZE, pos, size)) {
+            if (className=="vertical_platform"){
+                player.isOnVerticalPlatform = true
+                continue
+            }
+            player.isOnVerticalPlatform = false
+
             position.x = this.position.x;
-            if (intersect(position, PLAYER_SIZE, pos, size)) {
+            if (intersect(position, PLAYER_SIZE, pos, size)) {                
                 if (this.position.y >= y + h)
                     position.y = y + PLATFORM_SIZE;
                 else
@@ -195,6 +220,7 @@ var GHOST_MOVEMENT =50
 var GHOST_SIZE = new Size(PLATFORM_SIZE, PLATFORM_SIZE*2)
 var BULLET_SIZE = new Size(10,10)
 var DISAPPEARING_PLATFORM_TIMEOUT = 500
+var VERTICAL_PLATFORM_DISPLACEMENT = PLATFORM_SIZE*5
 
 var GET_COIN_SCORE = 10
 var GHOST_KILL_SCORE = 50
@@ -202,7 +228,7 @@ var LEVEL_PASS_SCORE = 1000
 //
 // Variables in the game
 //
-var motionType = {NONE:0, LEFT:1, RIGHT:2}; // Motion enum
+var motionType = {NONE:0, LEFT:1, RIGHT:2, UP:3, DOWN:4}; // Motion enum
 var exit_position
 var svgdoc = null;                          // SVG root document node
 var player = null;                          // The player object
@@ -219,6 +245,9 @@ var ghost = []
 var ghost_count = 0
 var bullet = []
 var bullet_count = 8
+var vertical_platform_count = 0
+var vertical_platform = []
+
 
 //
 // The load function for the SVG document
@@ -279,7 +308,7 @@ function keydown(evt) {
             player.motion = motionType.RIGHT;
             break;
         case "Z".charCodeAt(0):
-            if (player.isOnPlatform()){
+            if (player.isOnPlatform() || player.isOnVerticalPlatform){
                 player.verticalSpeed = JUMP_SPEED
             }
             break;
@@ -412,6 +441,36 @@ function gamePlay() {
     }
 }
 
+function updateVerticalPlatformPosition(){
+    var move = VERTICAL_DISPLACEMENT
+    var new_y
+    for (var i=0; i<vertical_platform_count; i++){
+        if (vertical_platform[i]){
+            if (vertical_platform[i].motion == motionType.UP){
+                new_y = vertical_platform[i].position.y - move
+                if (new_y <= vertical_platform[i].origin.y - VERTICAL_PLATFORM_DISPLACEMENT){
+                    new_y = vertical_platform[i].origin.y - VERTICAL_PLATFORM_DISPLACEMENT
+                    vertical_platform[i].motion = motionType.DOWN
+                }
+            }
+            else if (vertical_platform[i].motion == motionType.DOWN){
+                new_y = vertical_platform[i].position.y + move
+                if (new_y >= vertical_platform[i].origin.y + VERTICAL_PLATFORM_DISPLACEMENT){
+                    new_y = vertical_platform[i].origin.y + VERTICAL_PLATFORM_DISPLACEMENT
+                    vertical_platform[i].motion = motionType.UP
+                }
+            }
+            if (player.isOnVerticalPlatform)
+                player.position.y = new_y - 2*PLATFORM_SIZE
+            vertical_platform[i].position.y = new_y 
+            vertical_platform[i].svgObject.setAttribute("y", new_y)
+
+            
+        }
+    }
+
+}
+
 function updateGhostPosition(){
     var move = MOVE_DISPLACEMENT/2
 
@@ -511,7 +570,7 @@ function collidePlatform(position, size){
         if (node.nodeName != "use") continue;
 
         var className = node.getAttribute("class")
-        if (className!="platform" && className!="disappear_platform") continue;
+        if (!isPlatform(className)) continue;
         var x = parseFloat(node.getAttribute("x"));
         var y = parseFloat(node.getAttribute("y"));
         if (intersect(position, size, new Point(x, y), new Size(PLATFORM_SIZE, PLATFORM_SIZE)))
@@ -531,6 +590,7 @@ function updateScreen() {
 
     updateGhostPosition()
     updateBulletPosition()
+    updateVerticalPlatformPosition()
 
     // Transform the player
     player.node.setAttribute("transform", "translate(" + player.position.x + "," + player.position.y + ")");
@@ -561,16 +621,22 @@ function setUpPlatform(level){
     var COIN = '3'
     var GHOST ='4'
     var DISAPPEARING_PLATFORM = '5'
+    var VERTICAL_PLATFORM = '6'
     var platforms = svgdoc.getElementById("platforms");
     var x,y
 
     if (level == 1){
         for (y=0;y<SCREEN_SIZE.h/PLATFORM_SIZE;y++){
             for(x=0;x<SCREEN_SIZE.w/PLATFORM_SIZE;x++){
-                if (getValueFromPlatform(x,y)==PLATFORM || getValueFromPlatform(x,y)==DISAPPEARING_PLATFORM){
+                if (getValueFromPlatform(x,y)==PLATFORM || getValueFromPlatform(x,y)==DISAPPEARING_PLATFORM
+                    || getValueFromPlatform(x,y)==VERTICAL_PLATFORM){
                     var newPlatform=svgdoc.createElementNS(xmlns,"use");
                     if (getValueFromPlatform(x,y)==DISAPPEARING_PLATFORM)
                         newPlatform.setAttributeNS(null, "class", "disappear_platform");
+                    else if (getValueFromPlatform(x,y)==VERTICAL_PLATFORM){
+                        newPlatform.setAttributeNS(null, "class", "vertical_platform");
+                        vertical_platform[vertical_platform_count++] = new VerticalPlatform(newPlatform, motionType.UP, new Point(PLATFORM_SIZE*x, PLATFORM_SIZE*(SCREEN_SIZE.h/PLATFORM_SIZE-y-1)))
+                    }
                     else
                         newPlatform.setAttributeNS(null, "class", "platform");
                     newPlatform.setAttributeNS(xlinkns, "xlink:href", "#platform_square");
