@@ -1,7 +1,7 @@
 var level1_platform = 
 [
 "0000000000000000000000000030000000000000",
-"0000000000000000000000000000000000000000",
+"0000000000000040000000000000000000000000",
 "0000000003000000000000000000000000000000",
 "0000000000000000000000011111111111100000",
 "0000000001000000000000000000000000000000",
@@ -11,10 +11,10 @@ var level1_platform =
 "0000000000000000000001000000000000030000",
 "0000000300000000000001000000000000000000",
 "0000000000000000000000000000010000000000",
-"0000000100000000000000300000000000000000",
+"0000000100000000000000300000000000400000",
 "0000000000000000000000000000000000000000",
 "0000000000000000001111111100000000000000",
-"0000003000000000000000000000000000000000",
+"0000003004000000000000000000000000000000",
 "0000000000000000000000000000000030000000",
 "0000111111111100000000000000000000000000",
 "0000000000000000000000000111111111111100",
@@ -24,7 +24,7 @@ var level1_platform =
 "0000000000000000000111111111000000000000",
 "0000000030004000000000000000000000000000",
 "0000000000000000000000000000000000000000",
-"0000011111111110000000000000000000000000",
+"0000011111111110000000000040000000000000",
 "0000000000000000000000000000000000000000",
 "0000000000000000000001111111111000000000",
 "0000000000040000000000000000001000000000",
@@ -33,9 +33,11 @@ var level1_platform =
 
 
 // The point and size class used in this program
-function Ghost(x, y, size){
+function Ghost(obj, motionType, x, y, size){
+    this.svgObject = obj
     this.position = new Point((x)? parseFloat(x) : 0.0, (y)? parseFloat(y) : 0.0)
     this.original = new Point((x)? parseFloat(x) : 0.0, (y)? parseFloat(y) : 0.0)
+    this.motion = motionType
     this.size = size
 }
 
@@ -340,6 +342,8 @@ function gamePlay() {
     // Set the location back to the player object (before update the screen)
     player.position = position;
 
+    updateGhostPosition()
+    
     updateScreen();
 
     processCoin(player.findCoin(player.position))
@@ -349,6 +353,29 @@ function gamePlay() {
 
     if (player.findExit(player.position)){
         proceedToNextRound()
+    }
+}
+
+function updateGhostPosition(){
+    for (var i=0; i<ghost_count; i++){
+        var move = MOVE_DISPLACEMENT/2
+        if (ghost[i].motion== motionType.LEFT){
+            move *= -1
+            if (ghost[i].position.x + move >= ghost[i].original.x - GHOST_MOVEMENT)
+                ghost[i].position.x += move
+            else{
+                ghost[i].motion = motionType.RIGHT
+                ghost[i].position.x = ghost[i].original.x - GHOST_MOVEMENT
+            }
+        }
+        else{
+            if (ghost[i].position.x + move <= ghost[i].original.x + GHOST_MOVEMENT)
+                ghost[i].position.x += move
+            else{
+                ghost[i].motion = motionType.LEFT
+                ghost[i].position.x = ghost[i].original.x + GHOST_MOVEMENT
+            }
+        }
     }
 }
 
@@ -398,7 +425,12 @@ function updateScreen() {
     if (isGameOver) return ;
     // Transform the player
     player.node.setAttribute("transform", "translate(" + player.position.x + "," + player.position.y + ")");
-            
+    
+    // ghost
+    for (var i=0; i<ghost_count; i++){
+        ghost[i].svgObject.setAttribute("transform", "translate(" + ghost[i].position.x + "," + ghost[i].position.y + ")");    
+    }
+
     // Calculate the scaling and translation factors	
     
     // Add your code here
@@ -449,13 +481,12 @@ function setUpPlatform(level){
                 else if (getValueFromPlatform(x,y)==GHOST){
                     var _x = PLATFORM_SIZE*x;
                     var _y = PLATFORM_SIZE*(SCREEN_SIZE.h/PLATFORM_SIZE-y-1)
-                    ghost[ghost_count++] = new Ghost(_x,_y, new Size(PLATFORM_SIZE, PLAYER_SIZE*2))
                     var newPlatform=svgdoc.createElementNS(xmlns,"use");
                     newPlatform.setAttributeNS(null, "class", "ghost");
                     newPlatform.setAttributeNS(xlinkns, "xlink:href", "#ghost");
-                    newPlatform.setAttribute("x",_x)
-                    newPlatform.setAttribute("y",_y)   
                     platforms.appendChild(newPlatform)
+                    console.log(""+((ghost_count%2)+1));
+                    ghost[ghost_count++] = new Ghost(newPlatform, (ghost_count%2)+1,_x,_y, new Size(PLATFORM_SIZE, PLAYER_SIZE*2))
                 }
             }
         }
