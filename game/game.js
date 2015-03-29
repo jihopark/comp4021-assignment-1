@@ -14,25 +14,31 @@ var level1_platform =
 "0000000100000000000000300000000000000000",
 "0000000000000000000000000000000000000000",
 "0000000000000000001111111100000000000000",
-"0000000000000000000000000000000000000000",
-"0000003000000000000000000000000030000000",
-"0000000000000000000000000000000000000000",
-"0000111111111111000000000111111111111100",
+"0000003000000000000000000000000000000000",
+"0000000000000000000000000000000030000000",
+"0000111111111100000000000000000000000000",
+"0000000000000000000000000111111111111100",
 "0000000000000000000000000000000000000000",
 "0000000000000000000000300000000000000000",
 "0000000000000000000000000000000000000000",
 "0000000000000000000111111111000000000000",
-"0000000030000000000000000000000000000000",
+"0000000030004000000000000000000000000000",
 "0000000000000000000000000000000000000000",
 "0000011111111110000000000000000000000000",
 "0000000000000000000000000000000000000000",
 "0000000000000000000001111111111000000000",
-"0000000000000000000000000000001000000000",
+"0000000000040000000000000000001000000000",
 "0000000000000000000000000000001000000000",
 "1111111111111111111111111111111111110000"]
 
 
 // The point and size class used in this program
+function Ghost(x, y, size){
+    this.position = new Point((x)? parseFloat(x) : 0.0, (y)? parseFloat(y) : 0.0)
+    this.original = new Point((x)? parseFloat(x) : 0.0, (y)? parseFloat(y) : 0.0)
+    this.size = size
+}
+
 function Point(x, y) {
     this.x = (x)? parseFloat(x) : 0.0;
     this.y = (y)? parseFloat(y) : 0.0;
@@ -169,7 +175,8 @@ var VERTICAL_DISPLACEMENT = 1;              // The displacement of vertical spee
 var PLATFORM_SIZE = 20
 var GAME_INTERVAL = 25;                     // The time interval of running the game
 var LEVEL_TOTAL_TIME = 100*1000                  // The total time in seconds
-
+var GHOST_MOVEMENT =50
+var GHOST_SIZE = new Size(PLATFORM_SIZE, PLATFORM_SIZE*2)
 //
 // Variables in the game
 //
@@ -186,6 +193,8 @@ var total_coin = 0
 var remaining_coin
 var current_score = 0
 var isGameOver = false
+var ghost = []
+var ghost_count = 0
 //
 // The load function for the SVG document
 //
@@ -334,7 +343,9 @@ function gamePlay() {
     updateScreen();
 
     processCoin(player.findCoin(player.position))
-    
+    if(bumpIntoGhost(player.position)){
+        gameOver()
+    }
 
     if (player.findExit(player.position)){
         proceedToNextRound()
@@ -363,6 +374,14 @@ function processCoin(coin){
     updateScore(10)
 }
 
+function bumpIntoGhost(position){
+    for (var i=0; i<ghost_count; i++){
+        if (intersect(position, PLAYER_SIZE, ghost[i].position, GHOST_SIZE))
+            return true
+    }
+    return false
+}
+
 function updateScore(addition){
     var score = svgdoc.getElementById("score")
     current_score += addition
@@ -376,6 +395,7 @@ function updateScore(addition){
 // the position of the player
 //
 function updateScreen() {
+    if (isGameOver) return ;
     // Transform the player
     player.node.setAttribute("transform", "translate(" + player.position.x + "," + player.position.y + ")");
             
@@ -393,6 +413,7 @@ function setUpPlatform(level){
     var PLATFORM = '1'
     var EXIT = '2'
     var COIN = '3'
+    var GHOST ='4'
     var platforms = svgdoc.getElementById("platforms");
     var x,y
 
@@ -423,6 +444,17 @@ function setUpPlatform(level){
                     newPlatform.setAttributeNS(xlinkns, "xlink:href", "#coin");
                     newPlatform.setAttribute("x",PLATFORM_SIZE*x)
                     newPlatform.setAttribute("y",PLATFORM_SIZE*(SCREEN_SIZE.h/PLATFORM_SIZE-y-1))   
+                    platforms.appendChild(newPlatform)
+                }
+                else if (getValueFromPlatform(x,y)==GHOST){
+                    var _x = PLATFORM_SIZE*x;
+                    var _y = PLATFORM_SIZE*(SCREEN_SIZE.h/PLATFORM_SIZE-y-1)
+                    ghost[ghost_count++] = new Ghost(_x,_y, new Size(PLATFORM_SIZE, PLAYER_SIZE*2))
+                    var newPlatform=svgdoc.createElementNS(xmlns,"use");
+                    newPlatform.setAttributeNS(null, "class", "ghost");
+                    newPlatform.setAttributeNS(xlinkns, "xlink:href", "#ghost");
+                    newPlatform.setAttribute("x",_x)
+                    newPlatform.setAttribute("y",_y)   
                     platforms.appendChild(newPlatform)
                 }
             }

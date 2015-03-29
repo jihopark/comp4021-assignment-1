@@ -27,6 +27,7 @@
     <rect id="platform_square" x="0" y="0" width="20" height="20" style="fill:orange" />
     <rect id="coin" x="0" y="0" width="20" height="20" style="fill:yellow" />
     <rect id="level_exit" x="-20" y="0" width="40" height="40" style="fill:green" />
+    <rect id="ghost" x="0" y="0" width="20" height="40" style="fill:purple" />
 
   </defs>
 
