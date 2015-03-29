@@ -10,7 +10,7 @@ var level1_platform =
 "0000000000000010000000000000000010000000",
 "0000000000000000000001000000000000030000",
 "0000000300000000000001000000000000000000",
-"0000000000000000000000000000000010000000",
+"0000000000000000000000000000010000000000",
 "0000000100000000000000300000000000000000",
 "0000000000000000000000000000000000000000",
 "0000000000000000001111111100000000000000",
@@ -184,6 +184,8 @@ var currentLevel = 1
 var remaining_time = LEVEL_TOTAL_TIME
 var total_coin = 0
 var remaining_coin
+var current_score = 0
+var isGameOver = false
 //
 // The load function for the SVG document
 //
@@ -230,6 +232,7 @@ function cleanUpGroup(id, textOnly) {
 // This is the keydown handling function for the SVG document
 //
 function keydown(evt) {
+    if (isGameOver) return false
     var keyCode = (evt.keyCode)? evt.keyCode : evt.getKeyCode();
 
     switch (keyCode) {
@@ -281,6 +284,7 @@ function gameClockPlay(){
 }
 
 function gameOver(){
+    isGameOver = true
     var gameOverText = svgdoc.getElementById("game_over_text")
     gameOverText.setAttribute("style","visibility:visible;fill:black;font-size:100px;z-index:100;")
 }
@@ -338,10 +342,15 @@ function gamePlay() {
 }
 
 function proceedToNextRound(){
+    if (remaining_coin!=0)
+        return ;
     var clock = svgdoc.getElementById("level_text")
-    clock.textContent = "Level " + ++currentLevel 
     player.position = PLAYER_INIT_POS
+    updateScore(remaining_time/100 + currentLevel*1000)
+    clock.textContent = "Level " + ++currentLevel 
+    
     remaining_time = LEVEL_TOTAL_TIME
+
 }
 
 function processCoin(coin){
@@ -350,6 +359,14 @@ function processCoin(coin){
     coin.parentNode.removeChild(coin)
     remaining_coin--;
     console.log("Remaining coin " + remaining_coin)
+
+    updateScore(10)
+}
+
+function updateScore(addition){
+    var score = svgdoc.getElementById("score")
+    current_score += addition
+    score.textContent = current_score
 }
 
 
