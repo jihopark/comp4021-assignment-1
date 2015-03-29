@@ -1,28 +1,28 @@
 var level1_platform = 
 [
+"0000000000000000000000000030000000000000",
 "0000000000000000000000000000000000000000",
-"0000000000000000000000000000000000000000",
-"0000000000000000000000000000000000000000",
+"0000000003000000000000000000000000000000",
 "0000000000000000000000011111111111100000",
 "0000000001000000000000000000000000000000",
-"0000000000000000000000000000000000000002",
+"0000000000000000000003000000000030000002",
 "0000000000000000000000000000000000000000",
 "0000000000000010000000000000000010000000",
-"0000000000000000000001000000000000000000",
-"0000000000000000000001000000000000000000",
+"0000000000000000000001000000000000030000",
+"0000000300000000000001000000000000000000",
 "0000000000000000000000000000000010000000",
-"0000000100000000000000000000000000000000",
+"0000000100000000000000300000000000000000",
 "0000000000000000000000000000000000000000",
 "0000000000000000001111111100000000000000",
 "0000000000000000000000000000000000000000",
-"0000000000000000000000000000000000000000",
+"0000003000000000000000000000000030000000",
 "0000000000000000000000000000000000000000",
 "0000111111111111000000000111111111111100",
 "0000000000000000000000000000000000000000",
-"0000000000000000000000000000000000000000",
+"0000000000000000000000300000000000000000",
 "0000000000000000000000000000000000000000",
 "0000000000000000000111111111000000000000",
-"0000000000000000000000000000000000000000",
+"0000000030000000000000000000000000000000",
 "0000000000000000000000000000000000000000",
 "0000011111111110000000000000000000000000",
 "0000000000000000000000000000000000000000",
@@ -130,6 +130,26 @@ Player.prototype.findExit = function(position){
     return intersect(position,PLAYER_SIZE, exit_position, EXIT_SIZE)
 }
 
+Player.prototype.findCoin = function(position){
+    var platforms = svgdoc.getElementById("platforms");
+
+    for (var i = 0; i < platforms.childNodes.length; i++) {
+        var node = platforms.childNodes.item(i);
+        if (node.nodeName != "use") continue;
+
+        var className = node.getAttribute("class")
+        if (className!="coin") continue;
+        var x = parseFloat(node.getAttribute("x"));
+        var y = parseFloat(node.getAttribute("y"));
+        var w = COIN_SIZE;
+        var h = COIN_SIZE;
+        if (intersect(position, PLAYER_SIZE, new Point(x,y), COIN_SIZE))
+            return node
+    }
+
+    return null;
+}
+
 
 //
 // Below are constants used in the game
@@ -142,7 +162,7 @@ var EXIT_SIZE = new Size(40,40)
 var SCREEN_SIZE = new Size(800, 600);       // The size of the game screen
 var PLAYER_INIT_POS  = new Point(0, 0);     // The initial position of the player
 
-
+var COIN_SIZE = new Size(20,20)
 var MOVE_DISPLACEMENT = 5;                  // The speed of the player in motion
 var JUMP_SPEED = 15;                        // The speed of the player jumping
 var VERTICAL_DISPLACEMENT = 1;              // The displacement of vertical speed
@@ -162,6 +182,8 @@ var zoom = 1.0;                             // The zoom level of the screen
 var gameClock = null;
 var currentLevel = 1
 var remaining_time = LEVEL_TOTAL_TIME
+var total_coin = 0
+var remaining_coin
 //
 // The load function for the SVG document
 //
@@ -307,6 +329,9 @@ function gamePlay() {
 
     updateScreen();
 
+    processCoin(player.findCoin(player.position))
+    
+
     if (player.findExit(player.position)){
         proceedToNextRound()
     }
@@ -317,6 +342,14 @@ function proceedToNextRound(){
     clock.textContent = "Level " + ++currentLevel 
     player.position = PLAYER_INIT_POS
     remaining_time = LEVEL_TOTAL_TIME
+}
+
+function processCoin(coin){
+    if (!coin) return ;
+
+    coin.parentNode.removeChild(coin)
+    remaining_coin--;
+    console.log("Remaining coin " + remaining_coin)
 }
 
 
@@ -340,13 +373,16 @@ function getValueFromPlatform(x, y){
 }
 
 function setUpPlatform(level){
+    var PLATFORM = '1'
+    var EXIT = '2'
+    var COIN = '3'
     var platforms = svgdoc.getElementById("platforms");
     var x,y
 
     if (level == 1){
         for (y=0;y<SCREEN_SIZE.h/PLATFORM_SIZE;y++){
             for(x=0;x<SCREEN_SIZE.w/PLATFORM_SIZE;x++){
-                if (getValueFromPlatform(x,y)=='1'){
+                if (getValueFromPlatform(x,y)==PLATFORM){
                     var newPlatform=svgdoc.createElementNS(xmlns,"use");
                     newPlatform.setAttributeNS(null, "class", "platform");
                     newPlatform.setAttributeNS(xlinkns, "xlink:href", "#platform_square");
@@ -354,7 +390,7 @@ function setUpPlatform(level){
                     newPlatform.setAttribute("y",PLATFORM_SIZE*(SCREEN_SIZE.h/PLATFORM_SIZE-y-1))   
                     platforms.appendChild(newPlatform)
                 }
-                else if (getValueFromPlatform(x,y)=='2'){
+                else if (getValueFromPlatform(x,y)==EXIT){
                     var newPlatform=svgdoc.createElementNS(xmlns,"use");
                     newPlatform.setAttributeNS(null, "class", "level_exit");
                     newPlatform.setAttributeNS(xlinkns, "xlink:href", "#level_exit");
@@ -363,8 +399,18 @@ function setUpPlatform(level){
                     platforms.appendChild(newPlatform)
                     exit_position = new Point(PLATFORM_SIZE*x-PLATFORM_SIZE, PLATFORM_SIZE*(SCREEN_SIZE.h/PLATFORM_SIZE-y-1))
                 }
+                else if (getValueFromPlatform(x,y)==COIN){
+                    total_coin++
+                    var newPlatform=svgdoc.createElementNS(xmlns,"use");
+                    newPlatform.setAttributeNS(null, "class", "coin");
+                    newPlatform.setAttributeNS(xlinkns, "xlink:href", "#coin");
+                    newPlatform.setAttribute("x",PLATFORM_SIZE*x)
+                    newPlatform.setAttribute("y",PLATFORM_SIZE*(SCREEN_SIZE.h/PLATFORM_SIZE-y-1))   
+                    platforms.appendChild(newPlatform)
+                }
             }
-        }    
+        }
+        remaining_coin = total_coin    
     }
 }
 
