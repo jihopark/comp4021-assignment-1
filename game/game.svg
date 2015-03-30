@@ -7,9 +7,24 @@
      onload="top.load(evt)">
 
   <defs>
-    <clipPath id="gameareaclip">
-      <rect x="20" y="20" width="800" height="600"/>
-    </clipPath>
+
+    <clipPath id="effect_clip">
+            <rect x="800" y="600" width="0" height="0">
+                <animate id="effect" attributeName="x" attributeType="XML"
+                         values="420;20"
+                         begin="start_button.click" dur="3s" fill="freeze"/>
+                <animate attributeName="y" attributeType="XML"
+                         values="320;20"
+                         begin="effect.begin" dur="3s" fill="freeze"/>
+                <animate attributeName="width" attributeType="XML"
+                         values="0;800"
+                         begin="effect.begin" dur="3s" fill="freeze"/>
+                <animate attributeName="height" attributeType="XML"
+                         values="0;600"
+                         begin="effect.begin" dur="3s" fill="freeze"/>
+            </rect>
+        </clipPath>
+
     <pattern id="background_pattern" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
       <rect width="20" height="20" style="fill:orange"/>
       <circle cx="10" cy="10" r="8" style="fill:lightyellow"/>
@@ -1797,8 +1812,25 @@
 
 
   <!-- Add your button here -->
+  <g id="start_screen" transform="translate(20,20)">
+    <rect x="0" y="0" width="800" height="600" style="fill:black"/>
+    <text x="200" y="100" style="fill:white;font-size:50px">PIG GHOST HUNT</text>
+    <text x="150" y="200" style="fill:white;font-size:30px">1. Do not Touch the Pig Ghost</text>
+    <text x="150" y="240" style="fill:white;font-size:30px">2. Collect All Coins</text>
+    <text x="150" y="280" style="fill:white;font-size:30px">3. Jump to the Exit to survive</text>
+    <text x="150" y="320" style="fill:white;font-size:30px">4. You have 8 bullets to shoot the ghost</text>
+    <text x="200" y="360" style="fill:white;font-size:30px">N - Move Left, M - Move Right</text>
+    <text x="200" y="400" style="fill:white;font-size:30px">Z - Jump, Space - Shoot</text>
+    
+    <g id="start_button">
+      <rect x="325" y="480" style="fill:orange;" rx="20" ry="20" width="150" height="50"/>
+      <text x="335" y="515" style="fill:white;font-size:30px">NORMAL</text>
+    </g>
 
-  <g style="clip-path:url(#gameareaclip)">
+    
+  </g>
+
+  <g style="clip-path:url(#effect_clip)">
     <g transform="translate(20,20)">
       <g id="gamearea" transform="translate(0,0)" width="800" height="600">
         <rect x="0" y="0" width="800" height="600" style="fill:white" />
@@ -2075,5 +2107,7 @@
     </g>
   </g>
   <text x="120" y="320" id="game_over_text" style="visibility:hidden;" >GAME OVER </text>
+
+  
 
 </svg>

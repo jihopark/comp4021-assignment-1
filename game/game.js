@@ -281,19 +281,9 @@ function load(evt) {
     // Attach keyboard events
     svgdoc.documentElement.addEventListener("keydown", keydown, false);
     svgdoc.documentElement.addEventListener("keyup", keyup, false);
-
+    svgdoc.getElementById("start_button").addEventListener("click", startGame)
     // Remove text nodes in the 'platforms' group
     cleanUpGroup("platforms", true);
-
-    // Create the player
-    player = new Player();
-
-    //
-    setUpPlatform(1);
-
-    // Start the game interval
-    gameInterval = setInterval("gamePlay()", GAME_INTERVAL);
-    gameClock = setInterval("gameClockPlay();", 1000)
 }
 
 //
@@ -361,6 +351,17 @@ function keyup(evt) {
             if (player.motion == motionType.RIGHT) player.motion = motionType.NONE;
             break;
     }
+}
+
+function startGame(evt){
+     // Create the player
+    player = new Player();
+    //
+    setUpPlatform(1);
+
+    // Start the game interval
+    gameInterval = setInterval("gamePlay()", GAME_INTERVAL);
+    gameClock = setInterval("gameClockPlay();", 1000)
 }
 
 function gameClockPlay(){
