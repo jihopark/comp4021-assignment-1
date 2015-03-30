@@ -1,7 +1,7 @@
 var level1_platform = 
 [
 "0000000000000000000007000000000000000000",
-"0000000000000040000000000000000000000000",
+"0000000000000040000000000000000000002000",
 "0000000000000000000000000000000000000000",
 "0000000000000000000000011555111110000000",
 "0000000005000000000000000000000000000000",
@@ -27,7 +27,7 @@ var level1_platform =
 "0000011111111110000000000040000000000000",
 "0000000000000000000000000000000000000000",
 "0000000000000000000001111111111000000000",
-"0000002000040000000000000000001000000700",
+"0000000000040000000000000000001000000700",
 "0000000000000000000000000000001000000000",
 "1111111111111111111111111111111111110000"]
 
@@ -66,7 +66,7 @@ var level2_platform =
 
 var level3_platform = 
 [
-"0000000000000000000000000000000070000000",
+"0000000000000000000000000000007000000000",
 "0000000000000000000000000004000000000000",
 "0000004000010000000040300000000030000200",
 "0005003000000030000000000000000000000000",
@@ -93,8 +93,8 @@ var level3_platform =
 "0000000010000000000000000000000000000000",
 "0000000000000000000000000000000000000000",
 "0000000000000000000000000000000000000000",
-"0000000000003040000030000400000004000030",
-"0000000000000000000000000000000000007000",
+"0000000000003040000030000400000004007030",
+"0000000000000000000000000000000000000000",
 "0000000000000000000000000000000000000000"]
 
 
@@ -489,7 +489,16 @@ function gameClockPlay(){
 }
 
 function gameOver(){
-    if (isGameOver) return    
+    if (isGameOver) return 
+    background.pause()
+    if (currentLevel==4){
+        svgdoc.getElementById("game_over_text").textContent = "Congrats!"
+        document.getElementById("congrats").play()
+    }   
+    else{
+        svgdoc.getElementById("game_over_text").textContent = "GAME OVER"
+        document.getElementById("boo").play()
+    }
     currentLevel=1
     svgdoc.getElementById("level_text").textContent = "Level " + currentLevel
     isGameOver = true
@@ -497,8 +506,7 @@ function gameOver(){
     updateHighScoreTable()
     svgdoc.getElementById("high_score_table").setAttribute("style","visibility:visible")
     svgdoc.getElementById("start_again_button").addEventListener("click",startAgain)
-    background.pause()
-    document.getElementById("boo").play()
+    
 }
 
 function updateHighScoreTable(){
@@ -793,7 +801,8 @@ function proceedToNextRound(){
     player.position = PLAYER_INIT_POS
     updateScore(remaining_time/100 + currentLevel*LEVEL_PASS_SCORE)
     clock.textContent = "Level " + ++currentLevel 
-     
+    if (currentLevel == 4)
+        gameOver() 
     remaining_time = LEVEL_TOTAL_TIME
     cleanUpGroup("platforms", true);
     setUpPlatform(currentLevel)
