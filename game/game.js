@@ -31,6 +31,72 @@ var level1_platform =
 "0000000000000000000000000000001000000000",
 "1111111111111111111111111111111111110000"]
 
+var level2_platform = 
+[
+"0000000000000000000003000000700000000000",
+"0000000000000000000000000400000000000000",
+"0000003000000000000000000000000000000000",
+"0000000040000000000001111111111110000000",
+"0000000000000000000000000000000000003000",
+"0055111111111000000000000040000000000000",
+"0000000000000000000000000000000000000000",
+"0000000000000000000000000111111111111166",
+"0000000003000000000000000000000000000000",
+"0000000000000000001000000000000000000000",
+"0000000000000000000000000000000030000000",
+"0000000001000000000000000040000000000000",
+"0000000000000000000000000000000000000000",
+"0003000000000001000050000011111111100000",
+"0000000030000000000000000000000000000000",
+"0000000000000000000000000000000000000000",
+"0000000000000000003000000000000040000000",
+"0551111111111000100000000000000000000000",
+"0000000000000000000000000000000000000000",
+"0000000000000000000000000030011111110000",
+"0000000000000000000000000000000000000000",
+"0000000000000000001000000000000000000000",
+"0000300000000400000000000010000000000000",
+"0000000000000000000000000000000000400000",
+"1111111110000000000000000000000000000000",
+"0000000000000000000000111111111111111111",
+"0000000000003000000000000000001000000000",
+"0000000000000000000000040000001000000000",
+"0000000011111111111000000000001007000200",
+"0000000000000000000000000000001000000000"]
+
+var level3_platform = 
+[
+"0000000000000000000000000000000070000000",
+"0000000000000000000000000004000000000000",
+"0000004000010000000040300000000030000200",
+"0005003000000030000000000000000000000000",
+"0000000000000000000000000000000010000000",
+"0000000100000000000000100000000000003000",
+"0000000000000010000000000001000000000000",
+"0000000000000000000000000000000000000000",
+"0000003000100000000000000000050000001000",
+"0000000000000000000000000000000000000000",
+"0000000000000000000000000100000004000000",
+"0000001000000000001000000000000000000000",
+"0000000000000000000000000040000000003000",
+"0000000000300001000000300000000100000000",
+"0000040000000000000000000000000000000000",
+"0000000000000000000000000000000000000000",
+"0000000006600000000000000001000000040000",
+"0000000000000000000000000000000000000000",
+"0000000000000030000000000000000000000000",
+"0000000000000000000010000000000010000000",
+"0000000030000000000000003000000000000000",
+"0000000000000000000000000000000000000000",
+"0000000000000010000000001000000003000000",
+"0000000000000000000000000000000000000000",
+"0000000010000000000000000000000000000000",
+"0000000000000000000000000000000000000000",
+"0000000000000000000000000000000000000000",
+"0000000000003040000030000400000004000030",
+"0000000000000000000000000000000000007000",
+"0000000000000000000000000000000000000000"]
+
 
 // The point and size class used in this program
 
@@ -385,6 +451,7 @@ function startGame(evt){
     current_score = 0
     updateScore(0)
     ghost = []
+    total_coin = 0
     bullet = []
     bullet_count = 8
     updateBulletCount()
@@ -409,6 +476,7 @@ function startGame(evt){
 function gameClockPlay(){
     if (isGameOver) return ;
     if (remaining_time == 0){ 
+        console.log("Game Clock")
         gameOver()
         return ;
     }
@@ -421,7 +489,9 @@ function gameClockPlay(){
 }
 
 function gameOver(){
-    if (isGameOver) return
+    if (isGameOver) return    
+    currentLevel=1
+    svgdoc.getElementById("level_text").textContent = "Level " + currentLevel
     isGameOver = true
     document.cookie = ""
     updateHighScoreTable()
@@ -619,6 +689,7 @@ function gamePlay() {
     processCoin(player.findCoin(player.position))
     if(!cheatMode && bumpIntoGhost(player.position)!=-1){
         gameOver()
+        console.log("bumpIntoGhost")
     }
 
     if (player.findExit(player.position)){
@@ -708,12 +779,25 @@ function removeBullet(n){
 function proceedToNextRound(){
     if (remaining_coin!=0)
         return ;
+    ghost = []
+    total_coin = 0
+    bullet = []
+    bullet_count = 8
+    updateBulletCount()
+    vertical_platform = []
+    vertical_platform_count = 0
+    ghost_count = 0
+    
+
     var clock = svgdoc.getElementById("level_text")
     player.position = PLAYER_INIT_POS
     updateScore(remaining_time/100 + currentLevel*LEVEL_PASS_SCORE)
     clock.textContent = "Level " + ++currentLevel 
-    
+     
     remaining_time = LEVEL_TOTAL_TIME
+    cleanUpGroup("platforms", true);
+    setUpPlatform(currentLevel)
+    bullet_count = 8
     document.getElementById("finish").play()
 }
 
@@ -744,7 +828,7 @@ function bumpIntoGhost(position){
 
 function updateScore(addition){
     var score = svgdoc.getElementById("score")
-    current_score += addition
+    current_score += addition*currentLevel
     score.textContent = current_score
 }
 
@@ -810,8 +894,10 @@ function updateScreen() {
     
 }
 
-function getValueFromPlatform(x, y){
-    return level1_platform[SCREEN_SIZE.h/PLATFORM_SIZE-y-1].charAt(x)  
+function getValueFromPlatform(x, y, i){
+    if (i==1) return level1_platform[SCREEN_SIZE.h/PLATFORM_SIZE-y-1].charAt(x)
+    else if (i==2) return level2_platform[SCREEN_SIZE.h/PLATFORM_SIZE-y-1].charAt(x) 
+    else if (i==3) return level3_platform[SCREEN_SIZE.h/PLATFORM_SIZE-y-1].charAt(x)
 }
 
 function setUpPlatform(level){
@@ -825,18 +911,17 @@ function setUpPlatform(level){
     var platforms = svgdoc.getElementById("platforms");
     var x,y
 
-    if (level == 1){
         for (y=0;y<SCREEN_SIZE.h/PLATFORM_SIZE;y++){
             for(x=0;x<SCREEN_SIZE.w/PLATFORM_SIZE;x++){
                 var _x = PLATFORM_SIZE*x
                 var _y = PLATFORM_SIZE*(SCREEN_SIZE.h/PLATFORM_SIZE-y-1)    
 
-                if (getValueFromPlatform(x,y)==PLATFORM || getValueFromPlatform(x,y)==DISAPPEARING_PLATFORM
-                    || getValueFromPlatform(x,y)==VERTICAL_PLATFORM){
+                if (getValueFromPlatform(x,y,level)==PLATFORM || getValueFromPlatform(x,y,level)==DISAPPEARING_PLATFORM
+                    || getValueFromPlatform(x,y,level)==VERTICAL_PLATFORM){
                     var newPlatform=svgdoc.createElementNS(xmlns,"use");
-                    if (getValueFromPlatform(x,y)==DISAPPEARING_PLATFORM)
+                    if (getValueFromPlatform(x,y,level)==DISAPPEARING_PLATFORM)
                         newPlatform.setAttributeNS(null, "class", "disappear_platform");
-                    else if (getValueFromPlatform(x,y)==VERTICAL_PLATFORM){
+                    else if (getValueFromPlatform(x,y,level)==VERTICAL_PLATFORM){
                         newPlatform.setAttributeNS(null, "class", "vertical_platform");
                         vertical_platform[vertical_platform_count++] = new VerticalPlatform(newPlatform, motionType.UP, new Point(PLATFORM_SIZE*x, PLATFORM_SIZE*(SCREEN_SIZE.h/PLATFORM_SIZE-y-1)))
                     }
@@ -847,7 +932,7 @@ function setUpPlatform(level){
                     newPlatform.setAttribute("y",_y)   
                     platforms.appendChild(newPlatform)
                 }
-                else if (getValueFromPlatform(x,y)==EXIT){
+                else if (getValueFromPlatform(x,y,level)==EXIT){
                     var newPlatform=svgdoc.createElementNS(xmlns,"use");
                     newPlatform.setAttributeNS(null, "class", "level_exit");
                     newPlatform.setAttributeNS(xlinkns, "xlink:href", "#level_exit");
@@ -856,7 +941,7 @@ function setUpPlatform(level){
                     platforms.appendChild(newPlatform)
                     exit_position = new Point(_x-PLATFORM_SIZE, _y)
                 }
-                else if (getValueFromPlatform(x,y)==COIN){
+                else if (getValueFromPlatform(x,y,level)==COIN){
                     total_coin++
                     var newPlatform=svgdoc.createElementNS(xmlns,"use");
                     newPlatform.setAttributeNS(null, "class", "coin");
@@ -865,14 +950,14 @@ function setUpPlatform(level){
                     newPlatform.setAttribute("y",_y)   
                     platforms.appendChild(newPlatform)
                 }
-                else if (getValueFromPlatform(x,y)==GHOST){
+                else if (getValueFromPlatform(x,y,level)==GHOST){
                     var newPlatform=svgdoc.createElementNS(xmlns,"use");
                     newPlatform.setAttributeNS(null, "class", "ghost");
                     newPlatform.setAttributeNS(xlinkns, "xlink:href", "#ghost");
                     platforms.appendChild(newPlatform)
                     ghost[ghost_count++] = new Ghost(newPlatform, (ghost_count%2)+1,_x,_y, new Size(PLATFORM_SIZE, PLAYER_SIZE*2))
                 }
-                else if (getValueFromPlatform(x,y)==PORTAL){                    
+                else if (getValueFromPlatform(x,y,level)==PORTAL){                    
                     var newPortal=svgdoc.createElementNS(xmlns,"use");
                     newPortal.setAttributeNS(null, "class", "portal");
                     newPortal.setAttributeNS(xlinkns, "xlink:href", "#portal");
@@ -888,6 +973,5 @@ function setUpPlatform(level){
             }
         }
         remaining_coin = total_coin    
-    }
 }
 
