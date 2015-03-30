@@ -3,7 +3,7 @@ var level1_platform =
 "0000000000000000000007000030000000000000",
 "0000000000000040000000000000000000000000",
 "0000000003000000000000000000000000000000",
-"0000000000000000000000011551111110000000",
+"0000000000000000000000011555111110000000",
 "0000000005000000000000000000000000000000",
 "0000000000000000000003000000000030000002",
 "0000000000000000000000000000000000000000",
@@ -106,8 +106,8 @@ Player.prototype.isOnPlatform = function() {
         var h = PLATFORM_SIZE;
 
         var isVerticalPlatform = className =="vertical_platform" 
-        if (((this.position.x >= x-PLAYER_SIZE.w && this.position.x <= x + PLATFORM_SIZE) ||
-             ((this.position.x + PLAYER_SIZE.w) == x && this.motion == motionType.RIGHT) ||
+        if (((this.position.x >= x-PLAYER_SIZE.w/2 && this.position.x <= x + PLATFORM_SIZE/2) ||
+             ((this.position.x + PLAYER_SIZE.w/2) == x && this.motion == motionType.RIGHT) ||
              (this.position.x == (x + PLATFORM_SIZE) && this.motion == motionType.LEFT)) &&
             this.position.y + PLAYER_SIZE.h == y){
             player.isOnVerticalPlatform = false
