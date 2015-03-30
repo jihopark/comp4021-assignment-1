@@ -271,6 +271,8 @@ var portal = []
 var flipPlayer = motionType.RIGHT
 var cheatMode = false
 var tryAgain = false
+var player_name = ""
+
 //
 // The load function for the SVG document
 //
@@ -283,6 +285,12 @@ function load(evt) {
     svgdoc.documentElement.addEventListener("keydown", keydown, false);
     svgdoc.documentElement.addEventListener("keyup", keyup, false);
     svgdoc.getElementById("start_button").addEventListener("click", startGame)
+
+    if (player_name==""){
+        player_name = prompt("Enter name","")
+        if (player_name=="") player_name = "Anonymous"
+    }
+
 }
 
 //
@@ -360,11 +368,14 @@ function keyup(evt) {
 }
 
 function startGame(evt){
+
      // Create the player
     player = new Player();
+    svgdoc.getElementById("player_name").textContent = player_name
     //
     isGameOver = false
     
+    total_coin = 0
     current_score = 0
     updateScore(0)
     ghost = []
@@ -407,7 +418,6 @@ function gameOver(){
     isGameOver = true
     svgdoc.getElementById("high_score_table").setAttribute("style","visibility:visible")
     svgdoc.getElementById("start_again_button").addEventListener("click",startAgain)
-
 }
 
 function startAgain(evt){

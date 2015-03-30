@@ -1848,6 +1848,8 @@
           <ellipse cx="25" cy="15" rx="3" ry="6" style="fill:black"/>
           <path d="M10,25 l20,0 q0,8 -10,8 t-10,-8" style="fill:orange;stroke:black;stroke-black:2"/>
         -->
+        <text id="player_name" style="fill:black;font-size:15px" x="0" y="-10">name</text>
+
        <svg
            width="40"
            height="40"
