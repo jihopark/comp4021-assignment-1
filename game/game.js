@@ -268,6 +268,7 @@ var bullet_count = 8
 var vertical_platform_count = 0
 var vertical_platform = []
 var portal = []
+var flipPlayer = motionType.RIGHT
 
 //
 // The load function for the SVG document
@@ -321,10 +322,12 @@ function keydown(evt) {
 
     switch (keyCode) {
         case "N".charCodeAt(0):
+            if (player.motion!=motionType.LEFT) flipPlayer = motionType.LEFT
             player.motion = motionType.LEFT;
             break;
 
         case "M".charCodeAt(0):
+            if (player.motion!=motionType.RIGHT) flipPlayer = motionType.RIGHT
             player.motion = motionType.RIGHT;
             break;
         case "Z".charCodeAt(0):
@@ -339,7 +342,6 @@ function keydown(evt) {
         return false
     }
 }
-
 
 //
 // This is the keyup handling function for the SVG document
@@ -614,8 +616,12 @@ function updateScreen() {
     updateVerticalPlatformPosition()
 
     // Transform the player
-    player.node.setAttribute("transform", "translate(" + player.position.x + "," + player.position.y + ")");
-    
+    if (flipPlayer==motionType.LEFT){
+        player.node.setAttribute("transform", "translate(" + player.position.x + "," + player.position.y + ")" + "translate(" + PLAYER_SIZE.w + ", 0) scale(-1, 1)");
+    }
+    else
+        player.node.setAttribute("transform", "translate(" + player.position.x + "," + player.position.y + ")");
+        
     // ghost
     for (var i=0; i<ghost_count; i++){
         if (ghost[i]) ghost[i].svgObject.setAttribute("transform", "translate(" + ghost[i].position.x + "," + ghost[i].position.y + ")");    
