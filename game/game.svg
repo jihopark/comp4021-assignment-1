@@ -27,7 +27,270 @@
     <rect id="platform_square" x="0" y="0" width="20" height="20" style="fill:orange" />
     <rect id="coin" x="0" y="0" width="20" height="20" style="fill:yellow" />
     <rect id="level_exit" x="-20" y="0" width="40" height="40" style="fill:green" />
-    <rect id="ghost" x="0" y="0" width="20" height="40" style="fill:purple" />
+    <g id="ghost" x="0" y="0"> 
+      <svg
+        width="20" height="40"
+          xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+          xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+          xmlns="http://www.w3.org/2000/svg"
+          xmlns:cc="http://creativecommons.org/ns#"
+          xmlns:dc="http://purl.org/dc/elements/1.1/"
+          xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+          xmlns:svg="http://www.w3.org/2000/svg"
+          xmlns:ns1="http://sozi.baierouge.fr"
+          xmlns:xlink="http://www.w3.org/1999/xlink"
+          id="svg2"
+          sodipodi:docname="Ghost Pig.svg"
+          viewBox="0 0 744.09 1052.4"
+          sodipodi:version="0.32"
+          inkscape:output_extension="org.inkscape.output.svg.inkscape"
+          inkscape:version="0.46"
+        >
+        <sodipodi:namedview
+            id="base"
+            bordercolor="#666666"
+            inkscape:pageshadow="2"
+            guidetolerance="10"
+            pagecolor="#ffffff"
+            gridtolerance="10000"
+            inkscape:window-height="712"
+            inkscape:zoom="0.35"
+            objecttolerance="10"
+            showgrid="false"
+            borderopacity="1.0"
+            inkscape:current-layer="layer1"
+            inkscape:cx="361.1839"
+            inkscape:cy="520"
+            inkscape:window-y="-4"
+            inkscape:window-x="-4"
+            inkscape:window-width="1024"
+            inkscape:pageopacity="0.0"
+            inkscape:document-units="px"
+        />
+        <g
+            transform="scale(1.2,1.2) translate(-5,0)"
+            id="layer1"
+            inkscape:label="Layer 1"
+            inkscape:groupmode="layer"
+          >
+          <path
+              id="path2383"
+              style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0195px;fill:#ffaaaa"
+              d="m362.84 143.81c-189.25 0-342.82 113.51-342.82 253.37-0.002 88.35 61.307 166.14 154.16 211.49-27.45 2.73-57.97 12.96-85.316 29.46-53.354 32.2-73.441 76.97-44.845 99.95 25.893 20.81 82.881 16.64 133.04-8.24-4 46.3 5.55 93.62 28.53 134.6-5.49 3.9-8.44 8.08-8.44 12.42 0 8.93 12.61 17.17 33.81 23.77 1.37 1.58 2.73 3.14 4.13 4.66-4.23 3.42-6.53 7.08-6.53 10.87 0 10.9 18.93 20.63 48.59 27.1-1.87 2.17-2.87 4.42-2.87 6.75 0 9.52 16.44 17.96 41.66 23.12-2.9 2.49-4.5 5.22-4.5 8.07 0 8.08 12.84 15.12 31.87 18.8-2.11 3.4-3.31 7.1-3.31 11 0 15 17.27 27.1 38.56 27.1 21.3 0 38.6-12.1 38.6-27.1 0-4.6-1.63-8.9-4.47-12.64 14.86-3.97 24.47-10.18 24.47-17.16 0-2.85-1.64-5.58-4.53-8.07 25.21-5.16 41.66-13.6 41.66-23.12 0-4.03-2.96-7.84-8.29-11.32 19.44-6.11 31.16-13.95 31.16-22.53 0-1.83-0.56-3.63-1.59-5.39 4.97-5.01 9.63-10.25 14.03-15.68 12.09-5.45 18.97-11.64 18.97-18.23 0-2.06-0.67-4.1-1.97-6.08 23.09-38.46 34.05-83.75 32.53-128.76 51.88 30.37 108.96 38.62 132.7 17.64 25.98-22.97 2.17-72.3-53.16-110.09-30.9-21.1-64.8-34.42-93.66-37.79 96.5-44.84 160.69-124.2 160.69-214.6 0-139.86-153.6-253.37-342.86-253.37z"
+          />
+          <path
+              id="path3157"
+              sodipodi:rx="70.147095"
+              sodipodi:ry="57.796459"
+              style="fill-rule:evenodd;stroke:#000000;stroke-width:1px;fill:#000000"
+              sodipodi:type="arc"
+              d="m675.72 428.91a70.147 57.796 0 1 1 -83.07 -60.48l13.06 56.79z"
+              transform="matrix(1.7869 0 0 -1.7055 -893.76 940.42)"
+              sodipodi:cy="425.21933"
+              sodipodi:cx="605.71429"
+              sodipodi:end="4.5250549"
+              sodipodi:start="0.063865787"
+          />
+          <path
+              id="path3159"
+              sodipodi:rx="70.147095"
+              sodipodi:ry="57.796459"
+              style="fill-rule:evenodd;stroke:#000000;stroke-width:1px;fill:#ff0000"
+              sodipodi:type="arc"
+              d="m628.64 370.6a70.147 57.796 0 1 1 -90.27 38.45l67.34 16.17z"
+              transform="matrix(1.5633 0 0 -1.6817 -399.66 918.29)"
+              sodipodi:cy="425.21933"
+              sodipodi:cx="605.71429"
+              sodipodi:end="9.7083473"
+              sodipodi:start="5.0453969"
+          />
+          <rect
+              id="rect3189"
+              style="stroke:#000000;stroke-linecap:round;fill:#000000"
+              rx="11.429"
+              ry="11.429"
+              height="22.857"
+              width="197.14"
+              y="320.93"
+              x="131.43"
+          />
+          <rect
+              id="rect3191"
+              style="stroke:#000000;stroke-linecap:round;fill:#000000"
+              rx="11.429"
+              ry="11.429"
+              height="22.857"
+              width="197.14"
+              y="320.93"
+              x="415.71"
+          />
+          <path
+              id="path3193"
+              sodipodi:rx="150"
+              sodipodi:ry="80.432434"
+              style="fill-rule:evenodd;stroke:#000000;stroke-width:1px;fill:#ff8080"
+              sodipodi:type="arc"
+              d="m-212.58 774.52a150 80.432 0 1 1 -2.5 0.25"
+              sodipodi:open="true"
+              transform="matrix(.99943 0 0 1.3694 559.89 -698.44)"
+              sodipodi:cy="853.79077"
+              sodipodi:cx="-187.14285"
+              sodipodi:end="10.80824"
+              sodipodi:start="4.5419678"
+          />
+          <rect
+              id="rect3195"
+              style="stroke:#000000;stroke-linecap:round;fill:#000000"
+              rx="11.429"
+              ry="11.429"
+              height="128.57"
+              width="31.429"
+              y="406.65"
+              x="311.43"
+          />
+          <rect
+              id="rect3197"
+              style="stroke:#000000;stroke-linecap:round;fill:#000000"
+              rx="11.429"
+              ry="11.429"
+              height="128.57"
+              width="31.429"
+              y="405.22"
+              x="401.43"
+          />
+          <rect
+              id="rect3275"
+              ry="6.739"
+              style="stroke:#000000;stroke-linecap:round;stroke-width:.27764;fill:#000000"
+              rx="9.8069"
+              transform="matrix(-.80677 .59087 -.80677 -.59087 0 0)"
+              height="19.159"
+              width="109.43"
+              y="-892.36"
+              x="380.07"
+          />
+          <rect
+              id="rect3277"
+              style="stroke:#000000;stroke-linecap:round;stroke-width:.80697;fill:#000000"
+              transform="matrix(.65304 -.75732 .77459 .63247 0 0)"
+              rx="11.389"
+              ry="11.391"
+              height="104"
+              width="25.302"
+              y="730.75"
+              x="-392.01"
+          />
+          <path
+              id="path3329"
+              sodipodi:rx="207.14285"
+              sodipodi:ry="31.428572"
+              style="fill-rule:evenodd;stroke:#000000;stroke-width:1px;fill:#ffff00"
+              sodipodi:type="arc"
+              d="m-268.57 706.65a207.14 31.429 0 1 1 -414.29 0 207.14 31.429 0 1 1 414.29 0z"
+              transform="translate(825.71 -645.71)"
+              sodipodi:cy="706.64789"
+              sodipodi:cx="-475.71429"
+          />
+          <path
+              id="path3331"
+              sodipodi:rx="141.42857"
+              sodipodi:ry="12.857142"
+              style="fill-rule:evenodd;stroke:#000000;stroke-width:1px;fill:#f9f9f9"
+              sodipodi:type="arc"
+              d="m-357.14 868.08a141.43 12.857 0 1 1 -282.86 0 141.43 12.857 0 1 1 282.86 0z"
+              transform="matrix(1.0908 0 0 .99831 892.39 -809.96)"
+              sodipodi:cy="868.07648"
+              sodipodi:cx="-498.57144"
+          />
+        </g
+        >
+        <metadata
+          >
+          <rdf:RDF
+            >
+            <cc:Work
+              >
+              <dc:format
+                >image/svg+xml</dc:format
+              >
+              <dc:type
+                  rdf:resource="http://purl.org/dc/dcmitype/StillImage"
+              />
+              <cc:license
+                  rdf:resource="http://creativecommons.org/licenses/publicdomain/"
+              />
+              <dc:publisher
+                >
+                <cc:Agent
+                    rdf:about="http://openclipart.org/"
+                  >
+                  <dc:title
+                    >Openclipart</dc:title
+                  >
+                </cc:Agent
+                >
+              </dc:publisher
+              >
+              <dc:title
+                >Ghost Pig</dc:title
+              >
+              <dc:date
+                >2009-12-14T17:37:58</dc:date
+              >
+              <dc:description
+              />
+              <dc:source
+                >https://openclipart.org/detail/28673/ghost-pig-by-cmliu</dc:source
+              >
+              <dc:creator
+                >
+                <cc:Agent
+                  >
+                  <dc:title
+                    >cmliu</dc:title
+                  >
+                </cc:Agent
+                >
+              </dc:creator
+              >
+              <dc:subject
+                >
+                <rdf:Bag
+                  >
+                  <rdf:li
+                    >pig</rdf:li
+                  >
+                  <rdf:li
+                    >unchecked</rdf:li
+                  >
+                </rdf:Bag
+                >
+              </dc:subject
+              >
+            </cc:Work
+            >
+            <cc:License
+                rdf:about="http://creativecommons.org/licenses/publicdomain/"
+              >
+              <cc:permits
+                  rdf:resource="http://creativecommons.org/ns#Reproduction"
+              />
+              <cc:permits
+                  rdf:resource="http://creativecommons.org/ns#Distribution"
+              />
+              <cc:permits
+                  rdf:resource="http://creativecommons.org/ns#DerivativeWorks"
+              />
+            </cc:License
+            >
+          </rdf:RDF
+          >
+        </metadata
+        >
+      </svg
+      >
+
+    </g>
     <rect id="bullet" x="0" y="0" width="10" height="10" style="fill:red" />
     <rect id="portal" x="0" y="0" width="20" height="20" style="fill:blue" />
 

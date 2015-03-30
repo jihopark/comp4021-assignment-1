@@ -500,9 +500,8 @@ function updateGhostPosition(){
     for (var i=0; i<ghost_count; i++){
         if (!ghost[i]) continue
         if (ghost[i].motion== motionType.LEFT){
-            move *= -1
-            if (ghost[i].position.x + move >= ghost[i].original.x - GHOST_MOVEMENT)
-                ghost[i].position.x += move
+            if (ghost[i].position.x - move >= ghost[i].original.x - GHOST_MOVEMENT)
+                ghost[i].position.x -= move
             else{
                 ghost[i].motion = motionType.RIGHT
                 ghost[i].position.x = ghost[i].original.x - GHOST_MOVEMENT
@@ -624,7 +623,13 @@ function updateScreen() {
         
     // ghost
     for (var i=0; i<ghost_count; i++){
-        if (ghost[i]) ghost[i].svgObject.setAttribute("transform", "translate(" + ghost[i].position.x + "," + ghost[i].position.y + ")");    
+        if (ghost[i]){
+            if (ghost[i].motion == motionType.LEFT){
+                ghost[i].svgObject.setAttribute("transform", "translate(" + ghost[i].position.x + "," + ghost[i].position.y + ")" + "translate(" + GHOST_SIZE.w + ", 0) scale(-1, 1)");    
+            }
+            else
+                ghost[i].svgObject.setAttribute("transform", "translate(" + ghost[i].position.x + "," + ghost[i].position.y + ")");    
+        }
     }
 
     //bullet
