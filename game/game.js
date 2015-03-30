@@ -269,7 +269,7 @@ var vertical_platform_count = 0
 var vertical_platform = []
 var portal = []
 var flipPlayer = motionType.RIGHT
-
+var cheatMode = false
 //
 // The load function for the SVG document
 //
@@ -325,8 +325,16 @@ function keydown(evt) {
                 player.verticalSpeed = JUMP_SPEED
             }
             break;
+        case "C".charCodeAt(0):
+            cheatMode = true
+            console.log("cheat mode enabled")
+            break;
+        case "V".charCodeAt(0):
+            cheatMode = false
+            console.log("cheat mode disabled")
+            break;
         case SPACE:
-            if (bullet_count > 0) shoot()
+            if (bullet_count > 0 || cheatMode) shoot()
             evt.preventDefault()
             break;
         return false
@@ -407,7 +415,9 @@ function createBulletSVG(){
 
 function updateBulletCount(){
     var text = svgdoc.getElementById("bullet_left")
-    text.textContent = --bullet_count + "/8" 
+    --bullet_count
+    if (!cheatMode)
+        text.textContent = bullet_count + "/8" 
 }  
 
 //
@@ -456,7 +466,7 @@ function gamePlay() {
     updateScreen();
 
     processCoin(player.findCoin(player.position))
-    if(bumpIntoGhost(player.position)!=-1){
+    if(!cheatMode && bumpIntoGhost(player.position)!=-1){
         gameOver()
     }
 
