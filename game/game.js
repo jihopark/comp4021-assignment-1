@@ -236,7 +236,7 @@ var VERTICAL_DISPLACEMENT = 1;              // The displacement of vertical spee
 var PLATFORM_SIZE = 20
 var GAME_INTERVAL = 25;                     // The time interval of running the game
 var LEVEL_TOTAL_TIME = 100*1000                  // The total time in seconds
-var GHOST_MOVEMENT =50
+var GHOST_MOVEMENT =100
 var GHOST_SIZE = new Size(PLATFORM_SIZE, PLATFORM_SIZE*2)
 var BULLET_SIZE = new Size(10,10)
 var DISAPPEARING_PLATFORM_TIMEOUT = 500
@@ -634,8 +634,12 @@ function updateScreen() {
 
     //bullet
     for (var i=0; i<8-bullet_count; i++){
-        if (bullet[i])
-            bullet[i].svgObject.setAttribute("transform", "translate(" + bullet[i].position.x + "," + bullet[i].position.y + ")");    
+        if (bullet[i]){
+            if (bullet[i].motion==motionType.RIGHT)
+                bullet[i].svgObject.setAttribute("transform", "translate(" + bullet[i].position.x + "," + bullet[i].position.y + ")" + "translate(" + 10 + ", 0) scale(-1, 1)");  
+            else
+                bullet[i].svgObject.setAttribute("transform", "translate(" + bullet[i].position.x + "," + bullet[i].position.y + ")");  
+        }  
     }
     // Calculate the scaling and translation factors	
     
