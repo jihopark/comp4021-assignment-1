@@ -1,9 +1,9 @@
 var level1_platform = 
 [
-"0000000000000000000000000030000000000000",
+"0000000000000000000007000030000000000000",
 "0000000000000040000000000000000000000000",
 "0000000003000000000000000000000000000000",
-"0000000000000000000000055111111111100000",
+"0000000000000000000000011551111110000000",
 "0000000005000000000000000000000000000000",
 "0000000000000000000003000000000030000002",
 "0000000000000000000000000000000000000000",
@@ -27,12 +27,17 @@ var level1_platform =
 "0000011111111110000000000040000000000000",
 "0000000000000000000000000000000000000000",
 "0000000000000000000001111111111000000000",
-"0000000000040000000000000000001000000000",
+"0000000000040000000000000000001000000700",
 "0000000000000000000000000000001000000000",
 "1111111111111111111111111111111111110000"]
 
 
 // The point and size class used in this program
+
+function Portal(obj, position){
+    this.svgObject = obj
+    this.position = position
+}
 
 function VerticalPlatform(obj, motion, origin){
     this.svgObject = obj
@@ -123,6 +128,21 @@ Player.prototype.isOnPlatform = function() {
 
 function removePlatform(node){
     node.parentNode.removeChild(node)
+}
+
+Player.prototype.checkEnterPortal = function(position){
+    if (!portal[0] || !portal[1]) return ;
+    var i = -1
+    if (intersect(position, PLAYER_SIZE, portal[0].position, new Size(PLATFORM_SIZE, PLATFORM_SIZE)))
+        i = 1
+    else if (intersect(position, PLAYER_SIZE, portal[1].position, new Size(PLATFORM_SIZE, PLATFORM_SIZE)))
+        i = 0 
+
+    if (i!=-1){   
+        player.position.x = portal[i].position.x + PLATFORM_SIZE
+        player.position.y = portal[i].position.y
+    }
+
 }
 
 Player.prototype.collidePlatform = function(position) {
@@ -247,7 +267,7 @@ var bullet = []
 var bullet_count = 8
 var vertical_platform_count = 0
 var vertical_platform = []
-
+var portal = []
 
 //
 // The load function for the SVG document
@@ -429,6 +449,7 @@ function gamePlay() {
     // Set the location back to the player object (before update the screen)
     player.position = position;
 
+    player.checkEnterPortal(position)
     updateScreen();
 
     processCoin(player.findCoin(player.position))
@@ -622,12 +643,16 @@ function setUpPlatform(level){
     var GHOST ='4'
     var DISAPPEARING_PLATFORM = '5'
     var VERTICAL_PLATFORM = '6'
+    var PORTAL = '7'
     var platforms = svgdoc.getElementById("platforms");
     var x,y
 
     if (level == 1){
         for (y=0;y<SCREEN_SIZE.h/PLATFORM_SIZE;y++){
             for(x=0;x<SCREEN_SIZE.w/PLATFORM_SIZE;x++){
+                var _x = PLATFORM_SIZE*x
+                var _y = PLATFORM_SIZE*(SCREEN_SIZE.h/PLATFORM_SIZE-y-1)    
+
                 if (getValueFromPlatform(x,y)==PLATFORM || getValueFromPlatform(x,y)==DISAPPEARING_PLATFORM
                     || getValueFromPlatform(x,y)==VERTICAL_PLATFORM){
                     var newPlatform=svgdoc.createElementNS(xmlns,"use");
@@ -640,37 +665,48 @@ function setUpPlatform(level){
                     else
                         newPlatform.setAttributeNS(null, "class", "platform");
                     newPlatform.setAttributeNS(xlinkns, "xlink:href", "#platform_square");
-                    newPlatform.setAttribute("x",PLATFORM_SIZE*x)
-                    newPlatform.setAttribute("y",PLATFORM_SIZE*(SCREEN_SIZE.h/PLATFORM_SIZE-y-1))   
+                    newPlatform.setAttribute("x",_x)
+                    newPlatform.setAttribute("y",_y)   
                     platforms.appendChild(newPlatform)
                 }
                 else if (getValueFromPlatform(x,y)==EXIT){
                     var newPlatform=svgdoc.createElementNS(xmlns,"use");
                     newPlatform.setAttributeNS(null, "class", "level_exit");
                     newPlatform.setAttributeNS(xlinkns, "xlink:href", "#level_exit");
-                    newPlatform.setAttribute("x",PLATFORM_SIZE*x)
-                    newPlatform.setAttribute("y",PLATFORM_SIZE*(SCREEN_SIZE.h/PLATFORM_SIZE-y-1))   
+                    newPlatform.setAttribute("x",_x)
+                    newPlatform.setAttribute("y",_y)   
                     platforms.appendChild(newPlatform)
-                    exit_position = new Point(PLATFORM_SIZE*x-PLATFORM_SIZE, PLATFORM_SIZE*(SCREEN_SIZE.h/PLATFORM_SIZE-y-1))
+                    exit_position = new Point(_x-PLATFORM_SIZE, _y)
                 }
                 else if (getValueFromPlatform(x,y)==COIN){
                     total_coin++
                     var newPlatform=svgdoc.createElementNS(xmlns,"use");
                     newPlatform.setAttributeNS(null, "class", "coin");
                     newPlatform.setAttributeNS(xlinkns, "xlink:href", "#coin");
-                    newPlatform.setAttribute("x",PLATFORM_SIZE*x)
-                    newPlatform.setAttribute("y",PLATFORM_SIZE*(SCREEN_SIZE.h/PLATFORM_SIZE-y-1))   
+                    newPlatform.setAttribute("x",_x)
+                    newPlatform.setAttribute("y",_y)   
                     platforms.appendChild(newPlatform)
                 }
                 else if (getValueFromPlatform(x,y)==GHOST){
-                    var _x = PLATFORM_SIZE*x;
-                    var _y = PLATFORM_SIZE*(SCREEN_SIZE.h/PLATFORM_SIZE-y-1)
                     var newPlatform=svgdoc.createElementNS(xmlns,"use");
                     newPlatform.setAttributeNS(null, "class", "ghost");
                     newPlatform.setAttributeNS(xlinkns, "xlink:href", "#ghost");
                     platforms.appendChild(newPlatform)
                     ghost[ghost_count++] = new Ghost(newPlatform, (ghost_count%2)+1,_x,_y, new Size(PLATFORM_SIZE, PLAYER_SIZE*2))
                 }
+                else if (getValueFromPlatform(x,y)==PORTAL){                    
+                    var newPortal=svgdoc.createElementNS(xmlns,"use");
+                    newPortal.setAttributeNS(null, "class", "portal");
+                    newPortal.setAttributeNS(xlinkns, "xlink:href", "#portal");
+                    newPortal.setAttribute("x",_x)
+                    newPortal.setAttribute("y",_y)   
+                    platforms.appendChild(newPortal)
+
+                    if (portal[0]) 
+                        portal[1] = new Portal(newPortal, new Point(_x,_y))
+                    else
+                        portal[0] = new Portal(newPortal, new Point(_x,_y))  
+                } 
             }
         }
         remaining_coin = total_coin    
