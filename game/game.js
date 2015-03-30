@@ -1,11 +1,11 @@
 var level1_platform = 
 [
-"0000000000000000000007000030000000000000",
+"0000000000000000000007000000000000000000",
 "0000000000000040000000000000000000000000",
-"0000000003000000000000000000000000000000",
+"0000000000000000000000000000000000000000",
 "0000000000000000000000011555111110000000",
 "0000000005000000000000000000000000000000",
-"0000000000000000000003000000000030000002",
+"0000000000000000000003000000000030000000",
 "0000000000000000000000000000000000000000",
 "0000000000000100000000000000000010000000",
 "0000000000000000000001000000000000030000",
@@ -27,7 +27,7 @@ var level1_platform =
 "0000011111111110000000000040000000000000",
 "0000000000000000000000000000000000000000",
 "0000000000000000000001111111111000000000",
-"0000000000040000000000000000001000000700",
+"0000002000040000000000000000001000000700",
 "0000000000000000000000000000001000000000",
 "1111111111111111111111111111111111110000"]
 
@@ -278,12 +278,14 @@ var cheatMode = false
 var tryAgain = false
 var player_name = ""
 var table_length
+var background_music
 
 //
 // The load function for the SVG document
 //
 function load(evt) {
 
+    background_music = document.getElementById("background")
     // Set the root node to the global variable
     svgdoc = evt.target.ownerDocument;
 
@@ -396,7 +398,7 @@ function startGame(evt){
     cleanUpGroup("platforms", true);
 
     setUpPlatform(1);
-    
+    background_music.play() 
     // Start the game interval
     if (!tryAgain){
         gameInterval = setInterval("gamePlay()", GAME_INTERVAL);
@@ -425,6 +427,8 @@ function gameOver(){
     updateHighScoreTable()
     svgdoc.getElementById("high_score_table").setAttribute("style","visibility:visible")
     svgdoc.getElementById("start_again_button").addEventListener("click",startAgain)
+    background.pause()
+    document.getElementById("boo").play()
 }
 
 function updateHighScoreTable(){
@@ -548,6 +552,7 @@ function shoot(){
     bullet[8-bullet_count] = new Bullet(createBulletSVG(), player.orientation, new Point(_x,_y))
     --bullet_count
     updateBulletCount()
+    document.getElementById("shoot").play()
 }
 
 function createBulletSVG(){
@@ -709,7 +714,7 @@ function proceedToNextRound(){
     clock.textContent = "Level " + ++currentLevel 
     
     remaining_time = LEVEL_TOTAL_TIME
-
+    document.getElementById("finish").play()
 }
 
 function processCoin(coin){
@@ -726,6 +731,7 @@ function killGhost(n){
     ghost[n].svgObject.parentNode.removeChild(ghost[n].svgObject)
     ghost[n] = null
     updateScore(GHOST_KILL_SCORE)
+    document.getElementById("ouch").play()
 }
 
 function bumpIntoGhost(position){
