@@ -270,6 +270,7 @@ var vertical_platform = []
 var portal = []
 var flipPlayer = motionType.RIGHT
 var cheatMode = false
+var tryAgain = false
 //
 // The load function for the SVG document
 //
@@ -282,8 +283,6 @@ function load(evt) {
     svgdoc.documentElement.addEventListener("keydown", keydown, false);
     svgdoc.documentElement.addEventListener("keyup", keyup, false);
     svgdoc.getElementById("start_button").addEventListener("click", startGame)
-    // Remove text nodes in the 'platforms' group
-    cleanUpGroup("platforms", true);
 }
 
 //
@@ -295,8 +294,7 @@ function cleanUpGroup(id, textOnly) {
     node = group.firstChild;
     while (node != null) {
         next = node.nextSibling;
-        if (!textOnly || node.nodeType == 3) // A text node
-            group.removeChild(node);
+        group.removeChild(node);
         node = next;
     }
 }
@@ -365,14 +363,34 @@ function startGame(evt){
      // Create the player
     player = new Player();
     //
-    setUpPlatform(1);
+    isGameOver = false
+    
+    current_score = 0
+    updateScore(0)
+    ghost = []
+    bullet = []
+    bullet_count = 8
+    updateBulletCount()
+    vertical_platform = []
+    vertical_platform_count = 0
+    ghost_count = 0
+    remaining_time = LEVEL_TOTAL_TIME
 
+
+    // Remove text nodes in the 'platforms' group
+    cleanUpGroup("platforms", true);
+
+    setUpPlatform(1);
+    
     // Start the game interval
-    gameInterval = setInterval("gamePlay()", GAME_INTERVAL);
-    gameClock = setInterval("gameClockPlay();", 1000)
+    if (!tryAgain){
+        gameInterval = setInterval("gamePlay()", GAME_INTERVAL);
+        gameClock = setInterval("gameClockPlay();", 1000)
+    }
 }
 
 function gameClockPlay(){
+    if (isGameOver) return ;
     if (remaining_time == 0){ 
         gameOver()
         return ;
@@ -387,8 +405,15 @@ function gameClockPlay(){
 
 function gameOver(){
     isGameOver = true
-    var gameOverText = svgdoc.getElementById("game_over_text")
-    gameOverText.setAttribute("style","visibility:visible;fill:black;font-size:100px;z-index:100;")
+    svgdoc.getElementById("high_score_table").setAttribute("style","visibility:visible")
+    svgdoc.getElementById("start_again_button").addEventListener("click",startAgain)
+
+}
+
+function startAgain(evt){
+    tryAgain = true
+    svgdoc.getElementById("high_score_table").setAttribute("style","visibility:hidden")
+    startGame()
 }
 
 function shoot(){
@@ -400,6 +425,7 @@ function shoot(){
     _y += (PLAYER_SIZE.h/2)
     
     bullet[8-bullet_count] = new Bullet(createBulletSVG(), player.orientation, new Point(_x,_y))
+    --bullet_count
     updateBulletCount()
 }
 
@@ -415,7 +441,6 @@ function createBulletSVG(){
 
 function updateBulletCount(){
     var text = svgdoc.getElementById("bullet_left")
-    --bullet_count
     if (!cheatMode)
         text.textContent = bullet_count + "/8" 
 }  
