@@ -2111,7 +2111,18 @@
   <g id="high_score_table" style="visibility:hidden">
     <rect x="20" y="20" width="800" height="600" style="fill:orange"/>
     <text x="120" y="120" id="game_over_text" style="fill:black;font-size:100px;">GAME OVER</text>
-    <text x="250" y="170" id="start_again_button" style="fill:black;font-size:40px">Press to Try Again</text>
+    <text x="250" y="160" id="start_again_button" style="fill:black;font-size:40px">Press to Try Again</text>
+    <text x="300" y="200" id="player0" style="fill:black;font-size:25px"></text>
+    <text x="300" y="240" id="player1" style="fill:black;font-size:25px"></text>
+    <text x="300" y="280" id="player2" style="fill:black;font-size:25px"></text>
+    <text x="300" y="320" id="player3" style="fill:black;font-size:25px"></text>
+    <text x="300" y="360" id="player4" style="fill:black;font-size:25px"></text>
+    <text x="300" y="400" id="player5" style="fill:black;font-size:25px"></text>
+    <text x="300" y="440" id="player6" style="fill:black;font-size:25px"></text>
+    <text x="300" y="480" id="player7" style="fill:black;font-size:25px"></text>
+    <text x="300" y="520" id="player8" style="fill:black;font-size:25px"></text>
+    <text x="300" y="560" id="player9" style="fill:black;font-size:25px"></text>
+    
   </g>
   
 

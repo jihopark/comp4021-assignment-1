@@ -34,6 +34,11 @@ var level1_platform =
 
 // The point and size class used in this program
 
+function ScoreRecord(name, score) {
+    this.name = name;
+    this.score = score;
+}
+
 function Portal(obj, position){
     this.svgObject = obj
     this.position = position
@@ -272,6 +277,7 @@ var flipPlayer = motionType.RIGHT
 var cheatMode = false
 var tryAgain = false
 var player_name = ""
+var table_length
 
 //
 // The load function for the SVG document
@@ -415,10 +421,117 @@ function gameClockPlay(){
 }
 
 function gameOver(){
+    if (isGameOver) return
     isGameOver = true
+    document.cookie = ""
+    updateHighScoreTable()
     svgdoc.getElementById("high_score_table").setAttribute("style","visibility:visible")
     svgdoc.getElementById("start_again_button").addEventListener("click",startAgain)
 }
+
+function updateHighScoreTable(){
+    var i =0;
+    var table = retrieveFromCookie();
+    for (i=0;i<10;i++){
+        if (table[i] && table[i].score < current_score)
+            break
+    }
+    if (i < 10){
+        for (var j = 9; j>=i;j--){
+            table[j] = table[j-1]
+        }
+
+        table[i] = new ScoreRecord(player_name, current_score)
+        console.log("put new score at " + i);
+    }
+    for (i=0;i<10;i++){
+        var text = svgdoc.getElementById("player"+i)
+        if (table[i]==null)
+            break
+        if (table[i].name == "0" && table[i].score == "0")
+            break
+        else if (i < 9)
+            text.textContent = (i+1) + "      " +table[i].name + "      " + table[i].score
+        else
+            text.textContent = " " + (i+1) + "      " +table[i].name + "      " + table[i].score
+    }
+    renewCookie()
+    saveCookie(table)
+}
+
+function saveCookie(table){
+    if (table_length++ == 10)
+        table_length--
+    for (var i=0;i<10;i++){
+        if (table[i]==null)
+            setCookie("player"+i, "0-0", null, null, null)    
+        else
+            setCookie("player"+i, table[i].name+"-"+table[i].score, null, null, null)
+    }
+    console.log("Cookie Saved " + document.cookie);
+}
+
+function retrieveFromCookie(){
+    var array = []
+    table_length = 0
+    console.log("retrieved cookie "+document.cookie)
+    for (var i = 0; i < 10; i++) {
+        var value = getCookie("player"+i)
+        console.log("value at " + i + " "+value)
+        if (value){
+            var tmp = value.split("-")
+            array[i]=new ScoreRecord(tmp[0],tmp[1])
+            table_length++
+        }
+        else
+            break;        
+    }   
+
+    return array
+}
+function renewCookie(){
+    for (var i = 0; i <= 10; i++)
+        deleteCookie("player"+i,null,null)
+}
+
+function setCookie(name, value, expires, path, domain, secure) {
+     var curCookie = name + "=" + escape(value) +
+         ((expires) ? "; expires=" + expires.toGMTString() : "") +
+         ((path) ? "; path=" + path : "") +
+         ((domain) ? "; domain=" + domain : "") +
+         ((secure) ? "; secure" : "");
+     document.cookie = curCookie;
+}
+
+function getCookie(name) {
+    var dc = document.cookie;
+    var prefix = name + "=";
+    var begin = dc.indexOf("; " + prefix);
+    if (begin == -1) {
+        begin = dc.indexOf(prefix);
+       if (begin != 0) return null;
+     } else
+       begin += 2;
+     var end = document.cookie.indexOf(";", begin);
+     if (end == -1)
+       end = dc.length;
+     return unescape(dc.substring(begin + prefix.length, end));
+   }
+
+   // name - name of the cookie
+   // [path] - path of the cookie (must be same as path used to create cookie)
+   // [domain] - domain of the cookie (must be same as domain used to create cookie)
+   // * path and domain default if assigned null or omitted if no explicit argument proceeds
+   function deleteCookie(name, path, domain) {
+     if (getCookie(name)) {
+       document.cookie = name + "=" + 
+       ((path) ? "; path=" + path : "") +
+       ((domain) ? "; domain=" + domain : "") +
+       "; expires=Thu, 01-Jan-70 00:00:01 GMT";
+     }
+   }
+
+
 
 function startAgain(evt){
     tryAgain = true
