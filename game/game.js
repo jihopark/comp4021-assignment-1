@@ -291,12 +291,6 @@ function load(evt) {
     svgdoc.documentElement.addEventListener("keydown", keydown, false);
     svgdoc.documentElement.addEventListener("keyup", keyup, false);
     svgdoc.getElementById("start_button").addEventListener("click", startGame)
-
-    if (player_name==""){
-        player_name = prompt("Enter name","")
-        if (player_name=="") player_name = "Anonymous"
-    }
-
 }
 
 //
@@ -377,6 +371,10 @@ function startGame(evt){
 
      // Create the player
     player = new Player();
+
+    player_name = prompt("Enter name", player_name)
+    if (player_name=="") player_name = "Anonymous"
+
     svgdoc.getElementById("player_name").textContent = player_name
     //
     isGameOver = false
